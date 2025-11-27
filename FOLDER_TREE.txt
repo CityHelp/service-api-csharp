@@ -1,0 +1,83 @@
+service-api-csharp/
+│
+├── 📂 service-api-csharp.Domain/          # CAPA DE DOMINIO
+│   ├── Aggregates/                         # Raíces de agregado
+│   ├── Entities/                           # Entidades del dominio
+│   ├── Enums/                              # Enumeraciones
+│   ├── Events/                             # Eventos del dominio
+│   ├── Exceptions/                         # Excepciones del dominio
+│   ├── Interfaces/                         # Interfaces de repositorios
+│   ├── Specifications/                     # Especificaciones
+│   └── ValueObjects/                       # Objetos de valor
+│
+├── 📂 service-api-csharp.Application/     # CAPA DE APLICACIÓN
+│   ├── Common/
+│   │   ├── Behaviors/                      # Pipelines de MediatR
+│   │   ├── Exceptions/                     # Excepciones de aplicación
+│   │   ├── Interfaces/                     # Interfaces de servicios
+│   │   ├── Mappings/                       # Perfiles de AutoMapper
+│   │   ├── Models/                         # Modelos compartidos
+│   │   └── Validators/                     # Validadores base
+│   ├── DTOs/                               # Data Transfer Objects
+│   ├── Features/                           # Características (CQRS)
+│   ├── Products/                           # Ejemplo de feature
+│   └── UseCases/                           # Casos de uso
+│
+├── 📂 service-api-csharp.Infrastructure/  # CAPA DE INFRAESTRUCTURA
+│   ├── Caching/                            # Implementación de caché
+│   ├── Email/                              # Servicio de correo
+│   ├── ExternalServices/                   # APIs externas
+│   ├── FileStorage/                        # Almacenamiento de archivos
+│   ├── Identity/                           # Autenticación
+│   ├── Logging/                            # Logging
+│   ├── Persistence/
+│   │   ├── Configurations/                 # Configuraciones EF Core
+│   │   ├── Interceptors/                   # Interceptores
+│   │   └── Migrations/                     # Migraciones
+│   ├── Repositories/                       # Implementaciones de repositorios
+│   └── Services/                           # Servicios de infraestructura
+│
+├── 📂 service-api-csharp.API/             # CAPA DE PRESENTACIÓN
+│   ├── Configuration/                      # Configuración de servicios
+│   ├── Controllers/                        # Controladores REST
+│   ├── Extensions/                         # Métodos de extensión
+│   ├── Filters/                            # Filtros de acción
+│   ├── Middleware/                         # Middleware personalizado
+│   ├── Properties/                         # Propiedades del proyecto
+│   ├── Dockerfile                          # Configuración Docker
+│   ├── docker-compose.yml                  # Docker Compose
+│   └── Program.cs                          # Punto de entrada
+│
+├── 📂 tests/                              # PRUEBAS
+│   ├── E2ETests/                           # Pruebas end-to-end
+│   ├── IntegrationTests/                   # Pruebas de integración
+│   └── UnitTests/
+│       ├── API/                            # Pruebas de controladores
+│       ├── Application/                    # Pruebas de aplicación
+│       ├── Domain/                         # Pruebas de dominio
+│       └── Infrastructure/                 # Pruebas de infraestructura
+│
+├── 📂 docs/                               # DOCUMENTACIÓN
+│   ├── API/                                # Documentación de API
+│   ├── Architecture/
+│   │   ├── PROJECT_STRUCTURE.md            # Estructura del proyecto
+│   │   └── ARCHITECTURE_DIAGRAM.md         # Diagramas de arquitectura
+│   ├── Diagrams/                           # Diagramas del sistema
+│   └── Guides/
+│       └── QUICK_START.md                  # Guía de inicio rápido
+│
+├── 📂 docker/                             # DOCKER
+│   └── (Configuración Docker)
+│
+├── 📂 scripts/                            # SCRIPTS
+│   └── (Scripts de utilidad)
+│
+├── 📂 .github/                            # GITHUB ACTIONS
+│   └── workflows/                          # Workflows de CI/CD
+│
+├── 📄 README.md                           # Documentación principal
+├── 📄 STRUCTURE_SUMMARY.md                # Resumen de la estructura
+├── �� .gitignore                          # Archivos ignorados por Git
+├── 📄 .env                                # Variables de entorno
+└── 📄 service-api-csharp.sln              # Solución de Visual Studio
+
