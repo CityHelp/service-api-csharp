@@ -1,0 +1,98 @@
+CREATE EXTENSION postgis;
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    identification VARCHAR(200) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL,
+    last_name VARCHAR(200) NOT NULL,
+    email VARCHAR(200) NOT NULL UNIQUE,
+    password_hash TEXT,
+    google_id VARCHAR(500) UNIQUE,
+    auth_provider VARCHAR(200) NOT NULL,
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    verification_token VARCHAR(200),
+    token_expiry_date TIMESTAMPTZ,
+    role VARCHAR(200) NOT NULL,
+    reset_password_token VARCHAR(200),
+    reset_token_expires_at TIMESTAMPTZ,
+    avatar_url TEXT,
+    last_login TIMESTAMPTZ,
+    status VARCHAR(200) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE category_reports (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    category_name VARCHAR(200) NOT NULL,
+    description VARCHAR(200) NOT NULL
+);
+
+CREATE TABLE reports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL,
+    ubication_coordinates GEOGRAPHY(Point, 4326) NOT NULL,
+    date_report TIMESTAMPTZ NOT NULL,
+    emergency_level VARCHAR(200) NOT NULL,
+
+    user_id UUID,
+    category_id INT,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+
+    CONSTRAINT fk_reports_user
+        FOREIGN KEY (user_id) REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_reports_category
+        FOREIGN KEY (category_id) REFERENCES category_reports(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+);
+
+CREATE INDEX idx_reports_user_id ON reports(user_id);
+CREATE INDEX idx_reports_category_id ON reports(category_id);
+CREATE INDEX idx_reports_coordinates ON reports USING GIST (ubication_coordinates);
+
+CREATE TABLE photos_reports (
+    id SERIAL PRIMARY KEY,
+    photo_url VARCHAR(200) NOT NULL,
+    report_id UUID NOT NULL,
+
+    CONSTRAINT fk_photos_reports
+        FOREIGN KEY (report_id) REFERENCES reports(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_photos_report_id ON photos_reports(report_id);
+
+CREATE TABLE city_sectors (
+    id SERIAL PRIMARY KEY,
+    name_place VARCHAR(200) NOT NULL,
+    area GEOGRAPHY(Polygon, 4326) NOT NULL
+);
+
+CREATE INDEX idx_city_sectors_area ON city_sectors USING GIST (area);
+
+CREATE TABLE emergency_cites (
+    id SERIAL PRIMARY KEY,
+    phone VARCHAR(200) NOT NULL,
+    ubication_coordinates GEOGRAPHY(Point, 4326) NOT NULL,
+    ubication_direction VARCHAR(200) NOT NULL,
+    id_sector INT,
+
+    CONSTRAINT fk_emergency_sector
+        FOREIGN KEY (id_sector) REFERENCES city_sectors(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+);
+
+CREATE INDEX idx_emergency_sector_id ON emergency_cites(id_sector);
+CREATE INDEX idx_emergency_coordinates ON emergency_cites USING GIST (ubication_coordinates);
+
+
+
