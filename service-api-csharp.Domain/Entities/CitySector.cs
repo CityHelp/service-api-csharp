@@ -10,5 +10,5 @@ public class CitySector
     public Polygon Area { get; set; } = null!; // ValueObject
 
     // Navigation properties
-    public ICollection<EmergencyCity> EmergencyCities { get; set; } = new List<EmergencyCity>();
+    public ICollection<EmergencySite> EmergencyCities { get; set; } = new List<EmergencySite>();
 }

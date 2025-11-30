@@ -15,7 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Report> Reports { get; set; }
     public DbSet<PhotoReport> PhotoReports { get; set; }
     public DbSet<CategoryReport> CategoryReports { get; set; }
-    public DbSet<EmergencyCity> EmergencyCities { get; set; }
+    public DbSet<EmergencySite> EmergencyCities { get; set; }
     public DbSet<CitySector> CitySectors { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
