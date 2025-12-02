@@ -7,6 +7,7 @@ public class CitySector
 {
     public int Id { get; set; }
     public string NamePlace { get; set; } = string.Empty;
+    public string Codigo { get; set; }
     public Polygon Area { get; set; } = null!; // ValueObject
 
     // Navigation properties

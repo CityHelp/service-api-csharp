@@ -42,6 +42,11 @@ public class EmergencySiteConfiguration : IEntityTypeConfiguration<EmergencySite
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(e => e.Description)
+            .IsRequired()
+            .HasMaxLength(500)
+            .HasColumnName("description");
+
         builder.HasOne(e => e.Sector)
             .WithMany(s => s.EmergencyCities)
             .HasForeignKey(e => e.IdSector)
