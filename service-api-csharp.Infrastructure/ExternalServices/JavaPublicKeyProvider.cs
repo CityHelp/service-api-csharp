@@ -38,8 +38,11 @@ public class JavaPublicKeyProvider : IJavaPublicKeyProvider
                 throw new InvalidOperationException("La llave pública recibida está vacía");
             }
 
-            // Cachear la llave pública
-            _cache.Set(CacheKey, publicKey, CacheDuration);
+            // Cachear la llave pública por 30 minutos para evitar llamadas frecuentes
+            _cache.Set(CacheKey, publicKey, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = CacheDuration
+            });
                         
             return publicKey;
         }
