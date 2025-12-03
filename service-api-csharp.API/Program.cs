@@ -3,7 +3,7 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication;
 using service_api_csharp.API.Authentication;
 using service_api_csharp.Application;
-using service_api_csharp.API.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 Env.Load();
 
@@ -12,10 +12,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers(); // Agregar soporte para controllers
 
-builder.Services.AddAuthentication("CustomJwtScheme")
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "CustomJwtScheme";
+    options.DefaultChallengeScheme = "CustomJwtScheme";
+})
     .AddScheme<AuthenticationSchemeOptions, CustomJwtHandler>("CustomJwtScheme", null);
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes("CustomJwtScheme")
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
 
 var services = builder.Services;
@@ -34,8 +44,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ========== JWT Authentication Middleware ==========
-// IMPORTANTE: Este middleware debe estar ANTES de los endpoints que quieres proteger
 app.UseAuthentication();
 app.UseAuthorization();
 

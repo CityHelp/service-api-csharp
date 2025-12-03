@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace service_api_csharp.API.Controllers;
@@ -16,10 +17,10 @@ public class TestAuthController : ControllerBase
     /// <summary>
     /// Endpoint protegido que requiere autenticación JWT
     /// </summary>
+    [Authorize]
     [HttpGet("protected")]
     public IActionResult GetProtectedData()
     {
-        // El middleware ya validó el token y asignó User
         var userId = User.FindFirst("sub")?.Value;
         var userName = User.FindFirst("name")?.Value ?? User.Identity?.Name;
         var email = User.FindFirst("email")?.Value;
