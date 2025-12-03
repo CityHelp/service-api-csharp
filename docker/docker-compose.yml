@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: telephone_directory_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Variables de entorno para la aplicación
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:8080
+
+      # Configuración de la base de datos
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-telephone_directory_db}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres123}
+
+      # ConnectionString completa
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${DB_NAME:-telephone_directory_db};Username=${DB_USER:-postgres};Password=${DB_PASSWORD:-postgres123}"
+    ports:
+      - "${API_PORT:-5000}:8080"
+    networks:
+      - telephone_network
+
+# ===================================
+# Networks
+# ===================================
+networks:
+  telephone_network:
+    driver: bridge
+    name: telephone_directory_network
+
+# ===================================
+# Volumes
+# ===================================
+volumes:
+  postgres_data:
+    name: telephone_directory_postgres_data

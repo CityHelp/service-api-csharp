@@ -5,17 +5,28 @@ using service_api_csharp.Domain.ValueObjects;
 
 namespace service_api_csharp.Infrastructure.Persistence.Configurations;
 
-public class EmergencyCityConfiguration : IEntityTypeConfiguration<EmergencyCity>
+public class EmergencySiteConfiguration : IEntityTypeConfiguration<EmergencySite>
 {
-    public void Configure(EntityTypeBuilder<EmergencyCity> builder)
+    public void Configure(EntityTypeBuilder<EmergencySite> builder)
     {
-        builder.ToTable("emergency_cites"); // Note: ERD says 'emergency_cites', keeping it as is.
+        builder.ToTable("emergency_sites"); 
 
         builder.HasKey(e => e.Id);
 
+        builder.Property(e => e.NameSite)
+            .IsRequired()
+            .HasMaxLength(200)
+            .HasColumnName("name_site");
+
         builder.Property(e => e.Phone)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(200)
+            .HasColumnName("phone");
+
+        builder.Property(e => e.NameSite)
+            .IsRequired()
+            .HasMaxLength(200)
+            .HasColumnName("name_site");
 
         // Spatial Mapping for Point
         builder.Property(e => e.UbicationCoordinates)
@@ -24,11 +35,17 @@ public class EmergencyCityConfiguration : IEntityTypeConfiguration<EmergencyCity
             .HasConversion(
                 p => new NetTopologySuite.Geometries.Point(p.X, p.Y) { SRID = p.Srid },
                 p => Point.Create(p.X, p.Y, p.SRID)
-            );
+            )
+            .HasColumnName("ubication_coordinates");
 
         builder.Property(e => e.UbicationDirection)
             .IsRequired()
             .HasMaxLength(200);
+
+        builder.Property(e => e.Description)
+            .IsRequired()
+            .HasMaxLength(500)
+            .HasColumnName("description");
 
         builder.HasOne(e => e.Sector)
             .WithMany(s => s.EmergencyCities)

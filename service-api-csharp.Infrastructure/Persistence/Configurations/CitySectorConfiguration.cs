@@ -18,6 +18,9 @@ public class CitySectorConfiguration : IEntityTypeConfiguration<CitySector>
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(c => c.Codigo)
+            .HasColumnName("codigo");
+
         // Spatial Mapping for Polygon
         builder.Property(c => c.Area)
             .IsRequired()

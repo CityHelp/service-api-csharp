@@ -8,11 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Behaviors\" />
-    <Folder Include="Common\Interfaces\" />
-    <Folder Include="Common\Mappings\" />
-    <Folder Include="Features\" />
-    <Folder Include="Products\" />
+    <Folder Include="RepositoriesInterfaces\" />
+    <Folder Include="Services\SystemDirectories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\service-api-csharp.Domain\service-api-csharp.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\9.0.11\ref\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
