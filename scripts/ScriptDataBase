@@ -73,26 +73,286 @@ CREATE INDEX idx_photos_report_id ON photos_reports(report_id);
 CREATE TABLE city_sectors (
     id SERIAL PRIMARY KEY,
     name_place VARCHAR(200) NOT NULL,
-    area GEOGRAPHY(Polygon, 4326) NOT NULL
+    area GEOGRAPHY(Polygon, 4326) NOT NULL,
+	number_comuna varchar(10) not null,
 );
 
 CREATE INDEX idx_city_sectors_area ON city_sectors USING GIST (area);
 
-CREATE TABLE emergency_cites (
+CREATE TABLE emergency_sites (
     id SERIAL PRIMARY KEY,
-    phone VARCHAR(200) NOT NULL,
+	name_site VARCHAR(200) NOT NULL,
+    phone VARCHAR(200) NOT NULL UNIQUE,
     ubication_coordinates GEOGRAPHY(Point, 4326) NOT NULL,
     ubication_direction VARCHAR(200) NOT NULL,
+	description VARCHAR(500) NOT NULL,
     id_sector INT,
 
-    CONSTRAINT fk_emergency_sector
-        FOREIGN KEY (id_sector) REFERENCES city_sectors(id)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL
+    FOREIGN KEY (id_sector) REFERENCES city_sectors(id)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL
 );
 
-CREATE INDEX idx_emergency_sector_id ON emergency_cites(id_sector);
-CREATE INDEX idx_emergency_coordinates ON emergency_cites USING GIST (ubication_coordinates);
 
+CREATE INDEX idx_emergency_sector_id ON emergency_sites(id_sector);
+CREATE INDEX idx_emergency_coordinates ON emergency_sites USING GIST (ubication_coordinates);
 
+CREATE TABLE cuadrantes(
+id serial PRIMARY KEY,
+number_cuadrante VARCHAR(200) NOT NULL,
+phone VARCHAR(200) NOT NULL,
+police_cai_id INT,
+
+FOREIGN KEY (police_cai_id) REFERENCES emergency_sites(id)
+ON UPDATE CASCADE
+ON DELETE SET NULL
+);
+
+CREATE INDEX idx_cuadrantes_id ON cuadrantes(police_cai_id);
+
+--- INFORMACION principal para el sistema de directorio
+
+------------------------------------------------------------
+-- 1. ESTACIÓN DE POLICÍA POPULAR (id = 1)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 1 - Popular', '3127227635', 1),
+('Cuadrante 2 - Popular', '3127137530', 1);
+
+------------------------------------------------------------
+-- 2. ESTACIÓN DE POLICÍA SANTA CRUZ (id = 2)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 1 - Santa Cruz', '3127209813', 2),
+('Cuadrante 2 - Santa Cruz', '3127224290', 2);
+
+------------------------------------------------------------
+-- 3. CAI LA CRUZ (id = 3) – Cuadrantes de Manrique
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 5 - La Cruz', '3005417328', 3),
+('Cuadrante 6 - La Cruz', '3127138917', 3);
+
+------------------------------------------------------------
+-- 4. ESTACIÓN DE POLICÍA ARANJUEZ (id = 4)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 1 - Aranjuez', '3127137619', 4),
+('Cuadrante 2 - Aranjuez', '3127210066', 4);
+
+------------------------------------------------------------
+-- 5. CAI CASTILLA (id = 5)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 3 - Castilla', '3127158890', 5),
+('Cuadrante 4 - Castilla', '3127153838', 5);
+
+------------------------------------------------------------
+-- 6. ESTACIÓN DE POLICÍA DOCE DE OCTUBRE (id = 6)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 1 - Doce de Octubre', '3127212577', 6),
+('Cuadrante 2 - Doce de Octubre', '3127210126', 6);
+
+------------------------------------------------------------
+-- 7. CAI AURES (id = 7) – Estación Castilla
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 11 - Aures', '3127204958', 7),
+('Cuadrante 12 - Aures', '3127203739', 7);
+
+------------------------------------------------------------
+-- 8. CAI VILLATINA (id = 8) – Estación Villa Hermosa
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 1 - Villatina', '3127126743', 8),
+('Cuadrante 3 - Villatina', '3127218409', 8);
+
+------------------------------------------------------------
+-- 9. CAI LA MILAGROSA (id = 9)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 8 - La Milagrosa', '3127225374', 9),
+('Cuadrante 9 - La Milagrosa', '3127146310', 9);
+
+------------------------------------------------------------
+-- 10. CAI BOSTON (id = 10) – Estación Candelaria
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 3 - Boston', '3127148895', 10),
+('Cuadrante 4 - Boston', '3127212231', 10);
+
+------------------------------------------------------------
+-- 11. ESTACIÓN DE POLICÍA ROBLEDO (id = 11)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 6 - Robledo', '3127217053', 11),
+('Cuadrante 7 - Robledo', '3127219520', 11);
+
+------------------------------------------------------------
+-- 12. CAI SANTA LUCÍA (id = 12) – Estación Laureles
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 1 - Santa Lucía', '3127150163', 12),
+('Cuadrante 2 - Santa Lucía', '3127152729', 12);
+
+------------------------------------------------------------
+-- 13. ESTACIÓN DE POLICÍA MANRIQUE (id = 13)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 10 - Manrique', '3127208766', 13),
+('Cuadrante 11 - Manrique', '3014570136', 13);
+
+------------------------------------------------------------
+-- 14. ESTACIÓN DE POLICÍA EL POBLADO (id = 14)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 1 - Poblado', '3127222130', 14),
+('Cuadrante 3 - Poblado', '3127212474', 14);
+
+------------------------------------------------------------
+-- 15. ESTACIÓN DE POLICÍA GUAYABAL (id = 15) – Estación Belén
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 2 - Guayabal', '3127219870', 15),
+('Cuadrante 3 - Guayabal', '3127133058', 15);
+
+------------------------------------------------------------
+-- 16. ESTACIÓN DE POLICÍA BELÉN (id = 16)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 1 - Belén', '3127223143', 16),
+('Cuadrante 2 - Belén', '3127219870', 16);
+
+------------------------------------------------------------
+-- 17. SUBESTACIÓN PALMITAS (id = 17)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 12 - Palmitas', '3127215095', 17),
+('Cuadrante 13 - Palmitas', '3127213824', 17);
+
+------------------------------------------------------------
+-- 18. ESTACIÓN DE POLICÍA SAN CRISTÓBAL (id = 18)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 8 - San Cristóbal', '3127204885', 18),
+('Cuadrante 9 - San Cristóbal', '3127210864', 18);
+
+------------------------------------------------------------
+-- 19. SUBESTACIÓN ALTA VISTA (id = 19)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 8 - Altavista', '3127129435', 19),
+('Cuadrante 9 - Altavista', '3127148811', 19);
+
+------------------------------------------------------------
+-- 20. ESTACIÓN DE POLICÍA S.A. DE PRADO (id = 20)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 24 - SAP', '3127153976', 20),
+('Cuadrante 25 - SAP', '3127206020', 20);
+
+------------------------------------------------------------
+-- 21. SUBESTACIÓN SANTA ELENA (id = 21)
+------------------------------------------------------------
+INSERT INTO cuadrantes (number_cuadrante, phone, police_cai_id) VALUES
+('Cuadrante 11 - Santa Elena', '3017423271', 21),
+('Cuadrante 12 - Santa Elena', '3127219633', 21);
+
+-- Cruz Roja
+INSERT INTO emergency_sites (
+    name_site,
+    phone,
+    ubication_coordinates,
+    ubication_direction,
+    description,
+    id_sector
+) VALUES (
+    'Cruz Roja Colombiana Seccional Antioquia – Sede Medellín',
+    '+57 604 350 5300',
+    ST_SetSRID(
+        ST_MakePoint(-75.583440, 6.212278),
+        4326
+    )::geography,
+    'Cra. 52 #25-310, Guayabal, Medellín, Antioquia, Colombia',
+    'Sede principal de la Cruz Roja en Medellín',
+    NULL
+);
+
+-- Defensa civil
+INSERT INTO emergency_sites (
+    name_site,
+    phone,
+    ubication_coordinates,
+    ubication_direction,
+    description,
+    id_sector
+) VALUES (
+    'Defensa Civil Colombiana - Seccional Antioquia (Medellín)',
+    '+57 604 408 7208',
+    ST_SetSRID(
+        ST_MakePoint(-75.55772, 6.25388),
+        4326
+    )::geography,
+    'Calle 60 #41-46, Barrio Los Ángeles / Prado Centro, Medellín, Antioquia, Colombia',
+    'Oficina principal de la Defensa Civil en Medellín (Seccional Antioquia).',
+    NULL
+);
+
+-- Transito
+INSERT INTO emergency_sites (
+    name_site,
+    phone,
+    ubication_coordinates,
+    ubication_direction,
+    description,
+    id_sector
+) VALUES (
+    'Secretaría de Tránsito de Medellín',
+    '+57 4 445 7700',
+    ST_SetSRID(
+        ST_MakePoint(-75.5742467, 6.2486069),
+        4326
+    )::geography,
+    'Carrera 64C #72-58, Barrio Caribe / Autopista Norte, Medellín, Antioquia, Colombia',
+    'Sede principal de tránsito y movilidad de Medellín.',
+    NULL
+);
+
+-- ESTACION DE BOMBEROS
+
+INSERT INTO emergency_sites (
+  name_site, phone, ubication_coordinates, ubication_direction, description, id_sector
+) VALUES
+('Bomberos Guayabal', '123',
+  ST_GeogFromText('POINT(-75.58670204726435 6.2154606145766556)'),
+  'Cra 65 #7-55', 'Atención las 24h', 15),
+
+('Bomberos Libertadores', '123',
+  ST_GeogFromText('POINT(-75.57790944726418 6.251388869356618)'),
+  'Cra 61 #48-104', 'Atención las 24h', 10),
+
+('Bomberos Buenos Aires', '123',
+  ST_GeogFromText('POINT(-75.55304866075504 6.236942043111809)'),
+  'Cl 45 #20C-01', 'Atención las 24h', 9),
+
+('Bomberos Campo Valdés', '123',
+  ST_GeogFromText('POINT(-75.55795414726411 6.2685495053182505)'),
+  'Cra 48A #72A-79', 'Atención las 24h', 4),
+
+('Bomberos Caribe', '123',
+  ST_GeogFromText('POINT(-75.5750 6.3145)'),
+  'Cra 64B #75A-22', 'Atención las 24h', 5),
+
+('Bomberos Doce de Octubre', '123',
+  ST_GeogFromText('POINT(-75.57893250493674 6.303005281425326)'),
+  'Cl 102A #80-56', 'Atención las 24h', 6),
+
+('Bomberos Floresta', '123',
+  ST_GeogFromText('POINT(-75.6101221914462 6.257272193741726)'),
+  'Cl 47B #93-44', 'Atención las 24h', 12),
+
+('Bomberos San Antonio de Prado', '123',
+  ST_GeogFromText('POINT(-75.64659453377377 6.176033060388236)'),
+  'Cl 41 Sur #60D-01', 'Atención las 24h', 22);
 

@@ -1,0 +1,68 @@
+# Directorios de build
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# Archivos de IDE
+**/.vs/
+**/.vscode/
+**/.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Archivos de sistema
+**/.DS_Store
+**/Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+**/Dockerfile
+**/docker-compose*.yml
+**/.dockerignore
+
+# Documentación y archivos de proyecto
+**/README.md
+**/docs/
+**/*.md
+
+# Tests (si no quieres incluirlos en la imagen)
+**/tests/
+**/*Tests/
+**/*.Tests/
+
+# Archivos de configuración local
+**/.env
+**/.env.local
+**/.env.*.local
+**/appsettings.Development.json
+
+# Node modules (si tienes frontend)
+**/node_modules/
+**/npm-debug.log
+
+# Logs
+**/logs/
+**/*.log
+
+# Archivos temporales
+**/tmp/
+**/temp/
+**/*.tmp
+**/*.temp
+
+# GitHub
+.github/
+
+# Scripts
+scripts/
+
+# Otros
+FOLDER_TREE.txt
+STRUCTURE_SUMMARY.md
