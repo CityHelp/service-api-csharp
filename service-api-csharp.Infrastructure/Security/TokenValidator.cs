@@ -1,10 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using service_api_csharp.Application.Common.RepositoriesInterfaces;
 using service_api_csharp.Application.Common.RepositoriesInterfaces.Others;
-using service_api_csharp.Application.POCOs;
 
 namespace service_api_csharp.Infrastructure.Security;
 
@@ -27,17 +24,14 @@ public class TokenValidator : ITokenValidator
     {
         try
         {
-            // Obtener la llave pública desde el proveedor
-            var publicKeyPem = await _publicKeyProvider.GetPublicKeyAsync();
-
-            // Convertir la llave pública PEM a RsaSecurityKey
-            var rsaSecurityKey = ConvertPemToRsaSecurityKey(publicKeyPem);
+            // Obtener las llaves públicas (JWKS) desde el proveedor
+            var signingKeys = await _publicKeyProvider.GetPublicKeysAsync();
 
             // Configurar los parámetros de validación
             var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = rsaSecurityKey,
+                IssuerSigningKeys = signingKeys,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.FromMinutes(5) // Tolerancia de 5 minutos para diferencias de reloj
             };
@@ -52,7 +46,7 @@ public class TokenValidator : ITokenValidator
                 ErrorMessage = null
             };
         }
-        catch (SecurityTokenExpiredException ex)
+        catch (SecurityTokenExpiredException)
         {
             return new service_api_csharp.Application.POCOs.TokenValidationResult
             {
@@ -61,7 +55,7 @@ public class TokenValidator : ITokenValidator
                 ErrorMessage = "El token ha expirado"
             };
         }
-        catch (SecurityTokenException ex)
+        catch (SecurityTokenException)
         {
             return new service_api_csharp.Application.POCOs.TokenValidationResult
             {
@@ -70,7 +64,7 @@ public class TokenValidator : ITokenValidator
                 ErrorMessage = "Token inválido"
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new service_api_csharp.Application.POCOs.TokenValidationResult
             {
@@ -78,34 +72,6 @@ public class TokenValidator : ITokenValidator
                 Principal = null,
                 ErrorMessage = "Error al validar el token"
             };
-        }
-    }
-    
-    private RsaSecurityKey ConvertPemToRsaSecurityKey(string publicKeyPem)
-    {
-        try
-        {
-            // Limpiar el formato PEM (remover headers y saltos de línea)
-            var pemContent = publicKeyPem
-                .Replace("-----BEGIN PUBLIC KEY-----", "")
-                .Replace("-----END PUBLIC KEY-----", "")
-                .Replace("\n", "")
-                .Replace("\r", "")
-                .Trim();
-
-            // Decodificar desde Base64
-            var keyBytes = Convert.FromBase64String(pemContent);
-
-            // Crear RSA desde los bytes
-            var rsa = RSA.Create();
-            rsa.ImportSubjectPublicKeyInfo(keyBytes, out _);
-
-            return new RsaSecurityKey(rsa);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error al convertir la llave pública PEM a RsaSecurityKey");
-            throw new InvalidOperationException("No se pudo procesar la llave pública", ex);
         }
     }
 }

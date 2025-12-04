@@ -27,7 +27,6 @@ public class SystemDirectoriesRepository : ISystemDirectoriesRepository
                 double.Parse(ubication.Latitude)
             )
         );
-
         
         var closestPerCategory = await _context.EmergencySite
             .Include(e => e.Category) // navegación

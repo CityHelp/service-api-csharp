@@ -10,9 +10,11 @@ public class EmergencySite
     public Point UbicationCoordinates { get; set; } = null!; // ValueObject
     public string UbicationDirection { get; set; } = string.Empty;
     public string Description { get; set; }
-    public int IdSector { get; set; }
+    public int SectorId { get; set; }
+    public int CategoryId { get; set; }
 
     // Navigation properties
-    public CitySector Sector { get; set; } = null!;
-    public ICollection<Cuadrante> Cuadrantes { get; set; } = null;
+    public CitySector? Sector { get; set; } = null!;
+    public ICollection<Cuadrante>? Cuadrantes { get; set; } = null;
+    public EmergencySiteCategories? Category { get; set; } = null;
 }
