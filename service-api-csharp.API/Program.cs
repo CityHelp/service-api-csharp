@@ -5,9 +5,9 @@ using service_api_csharp.API.Authentication;
 using service_api_csharp.Application;
 using Microsoft.AspNetCore.Authorization;
 
-Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
+Env.Load();
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers(); // Agregar soporte para controllers
@@ -27,9 +27,9 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
-
 var services = builder.Services;
 var configuration = builder.Configuration;
+configuration.AddEnvironmentVariables();
 
 services.AddInfrastructureServices(configuration);
 services.AddApplicationServices();
@@ -44,8 +44,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 
 // Mapear los controllers

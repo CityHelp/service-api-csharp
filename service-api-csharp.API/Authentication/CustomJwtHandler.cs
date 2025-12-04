@@ -19,7 +19,7 @@
         {
             _tokenValidator = tokenValidator;
         }
-
+    
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             string? token = Request.Headers["Authorization"]

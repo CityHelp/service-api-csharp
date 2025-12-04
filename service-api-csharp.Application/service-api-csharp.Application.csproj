@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="RepositoriesInterfaces\" />
-    <Folder Include="Services\SystemDirectories\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\service-api-csharp.Domain\service-api-csharp.Domain.csproj" />
   </ItemGroup>
 
@@ -20,6 +15,11 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
       <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\9.0.11\ref\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
   </ItemGroup>
 
 </Project>
