@@ -27,12 +27,21 @@ public class SystemDirectoriesRepository : ISystemDirectoriesRepository
                 double.Parse(ubication.Latitude)
             )
         );
+
+        // Ensure SRID matches the stored geometry to avoid translation issues
+        if (userLocation.SRID == 0)
+        {
+            userLocation.SRID = 4326;
+        }
         
         var closestPerCategory = await _context.EmergencySite
             .Include(e => e.Category) // navegación
             .GroupBy(e => e.CategoryId)
             .Select(g => g
-                .OrderBy(e => EF.Property<Point>(e, "UbicationCoordinates").Distance(userLocation))
+                .OrderBy(e => EF.Functions.Distance(
+                    EF.Property<Point>(e, nameof(EmergencySite.UbicationCoordinates)),
+                    userLocation
+                ))
                 .FirstOrDefault()
             )
             .ToListAsync();
