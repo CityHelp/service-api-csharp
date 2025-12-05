@@ -4,11 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using NetTopologySuite;
 using service_api_csharp.Application.Common.RepositoriesInterfaces.Others;
 using service_api_csharp.Application.InterfacesRepositories;
-using service_api_csharp.Application.Services;
 using service_api_csharp.Infrastructure.ExternalServices;
 using service_api_csharp.Infrastructure.Persistence;
 using service_api_csharp.Infrastructure.Repositories;
 using service_api_csharp.Infrastructure.Security;
+using service_api_csharp.Infrastructure.Helpers;
 
 namespace service_api_csharp.Infrastructure;
 
@@ -18,13 +18,15 @@ public static class DependencyInjection
     {
         //Database service
         #region Database
-        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+        
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        
+     
         
         if (string.IsNullOrEmpty(connectionString))
         {
             throw new InvalidOperationException("Missing connection string ❌.");
         }
-
         try
         {
             services.AddDbContext<AppDbContext>(options =>
@@ -47,28 +49,31 @@ public static class DependencyInjection
 
         #endregion
         
-        //Jwt Service
-        #region Jwt
-        // ========== JWT Authentication Services ==========
-        
-        // Agregar caché en memoria
-        services.AddMemoryCache();
-        
-        // Configurar HttpClient para el macroservicio Java
-        var url = configuration["JavaAuthService__Url"];
-        
-        if (string.IsNullOrEmpty(url))
-        {
-            throw new InvalidOperationException("Environment variable 'JavaAuthService__Url' not found");
-        }
+        // //Jwt Service
+        // #region Jwt
+        // // ========== JWT Authentication Services ==========
+        //
+        // // Agregar caché en memoria
+        //
+        // // Configurar HttpClient para el macroservicio Java
+        var url = configuration["Auth__JavaUrl"];
+        //
+        // if (string.IsNullOrEmpty(url))
+        // {
+        //     throw new InvalidOperationException("Environment variable 'Auth__JavaUrl' not found");
+        // }
         services.AddHttpClient<IJavaPublicKeyProvider, JavaPublicKeyProvider>(client =>
         {
              client.BaseAddress = new Uri(url);
         });
-        #endregion
+        // #endregion
+        //
+        //Configuration
+        services.Configure<AuthSettings>(configuration.GetSection("Auth__JavaUrl"));
+
         
-        //Dependencies
-        
+        //Services
+        services.AddMemoryCache();
         services.AddScoped<ITokenValidator, TokenValidator>();
         services.AddScoped<ISystemDirectoriesRepository, SystemDirectoriesRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -1,5 +1,5 @@
 
-namespace service_api_csharp.Infrastructure;
+namespace service_api_csharp.Infrastructure.Helpers;
 
 public class AuthSettings
 {

@@ -25,11 +25,4 @@ public class AppDbContext : DbContext
 
         base.OnModelCreating(modelBuilder);
     }
-    
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql("DefaultConnection",
-            x => x.UseNetTopologySuite() // <--- Esto habilita el mapeo espacial de NTS
-        );
-    }
 }

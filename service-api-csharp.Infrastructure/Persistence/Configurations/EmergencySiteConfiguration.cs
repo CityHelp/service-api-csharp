@@ -32,11 +32,8 @@ public class EmergencySiteConfiguration : IEntityTypeConfiguration<EmergencySite
         builder.Property(e => e.UbicationCoordinates)
             .IsRequired()
             .HasColumnType("geometry(Point, 4326)")
-            .HasConversion(
-                p => new NetTopologySuite.Geometries.Point(p.X, p.Y) { SRID = p.Srid },
-                p => Point.Create(p.X, p.Y, p.SRID)
-            )
             .HasColumnName("ubication_coordinates");
+
 
         builder.Property(e => e.UbicationDirection)
             .IsRequired()

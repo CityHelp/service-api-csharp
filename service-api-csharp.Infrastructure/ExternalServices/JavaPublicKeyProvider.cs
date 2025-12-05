@@ -1,7 +1,8 @@
 using Microsoft.Extensions.Caching.Memory;
-using service_api_csharp.Application.Common;
+using Microsoft.Extensions.Options;
 using service_api_csharp.Application.Common.RepositoriesInterfaces.Others;
 using Microsoft.IdentityModel.Tokens;
+using service_api_csharp.Infrastructure.Helpers;
 
 namespace service_api_csharp.Infrastructure.ExternalServices;
 
@@ -14,7 +15,8 @@ public class JavaPublicKeyProvider : IJavaPublicKeyProvider
 
     public JavaPublicKeyProvider(
         HttpClient httpClient,
-        IMemoryCache cache)
+        IMemoryCache cache,
+        IOptions<AuthSettings> options)
     {
         _httpClient = httpClient;   
         _cache = cache;
@@ -29,14 +31,14 @@ public class JavaPublicKeyProvider : IJavaPublicKeyProvider
         {
             try
             {
-                var response = await _httpClient.GetAsync("/api/auth/public-key");
+                var response = await _httpClient.GetAsync("");
                 response.EnsureSuccessStatusCode();
 
                 jwksJson = await response.Content.ReadAsStringAsync();
 
                 if (string.IsNullOrWhiteSpace(jwksJson))
                 {
-                    throw new InvalidOperationException("El JWKS recibido está vacío");
+                    throw new InvalidOperationException("JWKS not found");
                 }
 
                 // Cachear el JWKS por 30 minutos
@@ -47,7 +49,7 @@ public class JavaPublicKeyProvider : IJavaPublicKeyProvider
             }
             catch (HttpRequestException ex)
             {
-                throw new InvalidOperationException("No se pudo obtener el JWKS del servicio de autenticación", ex);
+                throw new InvalidOperationException("An error ocurrered while obtain JWKS", ex);
             }
         }
 
