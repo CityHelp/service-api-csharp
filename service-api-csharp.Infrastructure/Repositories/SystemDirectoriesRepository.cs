@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using service_api_csharp.Application.DTOs;
@@ -23,8 +24,8 @@ public class SystemDirectoriesRepository : ISystemDirectoriesRepository
     {
         var userLocation = _geometryFactory.CreatePoint(
             new Coordinate(
-                double.Parse(ubication.Longitude),
-                double.Parse(ubication.Latitude)
+                double.Parse(ubication.Longitude, CultureInfo.InvariantCulture),
+                double.Parse(ubication.Latitude, CultureInfo.InvariantCulture)
             )
         );
 
@@ -33,17 +34,25 @@ public class SystemDirectoriesRepository : ISystemDirectoriesRepository
         {
             userLocation.SRID = 4326;
         }
-        
+
         var closestPerCategory = await _context.EmergencySite
             .Include(e => e.Category) // navegación
-            .GroupBy(e => e.CategoryId)
+            .Select(e => new
+            {
+                Site = e,
+                Geometry = EF.Property<Point>(e, nameof(EmergencySite.UbicationCoordinates))
+            })
+            .Where(x => x.Geometry != null)
+            .Select(x => new
+            {
+                x.Site,
+                Distance = EF.Functions.Distance(x.Geometry!, userLocation)
+            })
+            .GroupBy(x => x.Site.CategoryId)
             .Select(g => g
-                .OrderBy(e => EF.Functions.Distance(
-                    EF.Property<Point>(e, nameof(EmergencySite.UbicationCoordinates)),
-                    userLocation
-                ))
-                .FirstOrDefault()
-            )
+                .OrderBy(x => x.Distance)
+                .Select(x => x.Site)
+                .FirstOrDefault())
             .ToListAsync();
         
         return closestPerCategory;
