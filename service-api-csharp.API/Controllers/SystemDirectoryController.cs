@@ -16,7 +16,7 @@ public class SystemDirectoryController : ControllerBase
         _unitOfWork = unitOfWork;
     }
     
-    [HttpPost("get-all-directories")]
+    [HttpPost("emergency-sites-nearby")]
     public async Task<IActionResult> GetAllDirectories([FromBody] UbicationUserDto request)
     {
         if (!ModelState.IsValid)
