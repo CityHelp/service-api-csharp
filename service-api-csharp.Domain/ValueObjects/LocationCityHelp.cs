@@ -1,13 +1,12 @@
 namespace service_api_csharp.Domain.ValueObjects;
 
-public sealed class Location : IEquatable<Location>
+public sealed class LocationCityHelp : IEquatable<LocationCityHelp>
 {
     public double Latitude { get; }
     public double Longitude { get; }
 
-    public Location(double latitude, double longitude)
+    public LocationCityHelp(double latitude, double longitude)
     {
-        // Validaciones de invariantes (recomendado)
         if (latitude is < -90 or > 90)
             throw new ArgumentException("Latitud inválida");
 
@@ -18,13 +17,14 @@ public sealed class Location : IEquatable<Location>
         Longitude = longitude;
     }
 
-    public bool Equals(Location? other)
-    {
-        if (other is null) return false;
-        return Latitude == other.Latitude &&
-               Longitude == other.Longitude;
-    }
+    private LocationCityHelp() { }
 
-    public override int GetHashCode() => 
-        HashCode.Combine(Latitude, Longitude);
+    public bool Equals(LocationCityHelp? other)
+        => other is not null &&
+           Latitude == other.Latitude &&
+           Longitude == other.Longitude;
+
+    public override int GetHashCode()
+        => HashCode.Combine(Latitude, Longitude);
 }
+
