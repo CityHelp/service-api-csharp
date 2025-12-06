@@ -48,5 +48,4 @@ EXPOSE 8080
 
 COPY --from=publish /app/publish .
 
-
 ENTRYPOINT ["dotnet", "service-api-csharp.API.dll"]
