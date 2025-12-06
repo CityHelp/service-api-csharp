@@ -27,6 +27,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
+      # Crea el archivo appsettings.json con la configuración
+      - name: Create appsettings.json
+        run: echo "${{ secrets.APPSETTINGS_JSON }}" > service-api-csharp.API/appsettings.json
+
       # Construye la imagen con el código actualizado
       - name: Build Docker image
         run: |
