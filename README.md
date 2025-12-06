@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 API REST construida con .NET 8 siguiendo los principios de Clean Architecture, CQRS y Domain-Driven Design (DDD).
+Haciendo pruebas para ver si funciona en Actions...
 
 ## 🏗️ Arquitectura
 
