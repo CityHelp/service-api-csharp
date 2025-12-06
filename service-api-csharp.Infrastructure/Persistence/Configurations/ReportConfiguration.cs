@@ -1,0 +1,51 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using service_api_csharp.Domain.Entities;
+using service_api_csharp.Domain.ValueObjects;
+using System.Linq;
+
+namespace service_api_csharp.Infrastructure.Persistence.Configurations;
+
+public class ReportConfiguration : IEntityTypeConfiguration<Report>
+{
+    public void Configure(EntityTypeBuilder<Report> builder)
+    {
+        builder.ToTable("reports");
+
+        builder.HasKey(r => r.Id);
+
+        builder.Property(r => r.Title)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.Property(r => r.Description)
+            .IsRequired()
+            .HasColumnType("text");
+
+        // Spatial Mapping for Point
+        builder.Property(r => r.UbicationCoordinates)
+            .IsRequired()
+            .HasColumnType("geometry(Point, 4326)") 
+            .HasConversion(
+                p => new NetTopologySuite.Geometries.Point(p.X, p.Y) { SRID = p.Srid },
+                p => Point.Create(p.X, p.Y, p.SRID)
+            );
+
+        builder.Property(r => r.DateReport)
+            .IsRequired();
+
+        builder.Property(r => r.EmergencyLevel)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.HasOne(r => r.User)
+            .WithMany(u => u.Reports)
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(r => r.Category)
+            .WithMany(c => c.Reports)
+            .HasForeignKey(r => r.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
