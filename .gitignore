@@ -6,6 +6,7 @@
 # dotenv files
 .env
 appsettings*.json
+docker/docker-compose.yml
 
 # User-specific files
 *.rsuser
