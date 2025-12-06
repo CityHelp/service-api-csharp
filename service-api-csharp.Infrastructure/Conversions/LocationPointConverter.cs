@@ -1,6 +1,4 @@
-namespace service_api_csharp.Infrastructure.Conversions;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 
-public class LocationPointConverter
-{
-    
-}
+namespace service_api_csharp.Infrastructure.Conversions;

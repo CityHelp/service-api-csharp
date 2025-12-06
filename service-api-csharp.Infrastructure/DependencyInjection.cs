@@ -9,6 +9,11 @@ using service_api_csharp.Infrastructure.Persistence;
 using service_api_csharp.Infrastructure.Repositories;
 using service_api_csharp.Infrastructure.Security;
 using service_api_csharp.Infrastructure.Helpers;
+using Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace service_api_csharp.Infrastructure;
 

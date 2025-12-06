@@ -1,0 +1,17 @@
+  Determinando los proyectos que se van a restaurar...
+  Todos los proyectos están actualizados para la restauración.
+  service-api-csharp.Domain -> /home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.Domain/bin/Debug/net9.0/service-api-csharp.Domain.dll
+  service-api-csharp.Application -> /home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.Application/bin/Debug/net9.0/service-api-csharp.Application.dll
+  service-api-csharp.Infrastructure -> /home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.Infrastructure/bin/Debug/net9.0/service-api-csharp.Infrastructure.dll
+/home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/Authentication/CustomJwtHandler.cs(16,13): warning CS0618: 'ISystemClock' está obsoleto: 'Use TimeProvider instead.' [/home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/service-api-csharp.API.csproj]
+/home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/Authentication/CustomJwtHandler.cs(18,13): warning CS0618: 'AuthenticationHandler<AuthenticationSchemeOptions>.AuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions>, ILoggerFactory, UrlEncoder, ISystemClock)' está obsoleto: 'ISystemClock is obsolete, use TimeProvider on AuthenticationSchemeOptions instead.' [/home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/service-api-csharp.API.csproj]
+  service-api-csharp.API -> /home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/bin/Debug/net9.0/service-api-csharp.API.dll
+
+Compilación correcta.
+
+/home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/Authentication/CustomJwtHandler.cs(16,13): warning CS0618: 'ISystemClock' está obsoleto: 'Use TimeProvider instead.' [/home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/service-api-csharp.API.csproj]
+/home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/Authentication/CustomJwtHandler.cs(18,13): warning CS0618: 'AuthenticationHandler<AuthenticationSchemeOptions>.AuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions>, ILoggerFactory, UrlEncoder, ISystemClock)' está obsoleto: 'ISystemClock is obsolete, use TimeProvider on AuthenticationSchemeOptions instead.' [/home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.API/service-api-csharp.API.csproj]
+    2 Advertencia(s)
+    0 Errores
+
+Tiempo transcurrido 00:00:04.18

@@ -20,21 +20,9 @@ public class CitySectorConfiguration : IEntityTypeConfiguration<CitySector>
 
         builder.Property(c => c.Codigo)
             .HasColumnName("codigo");
-
-        // Spatial Mapping for Polygon
-        builder.Property(c => c.Area)
-            .IsRequired()
-            .HasColumnType("geometry(Polygon, 4326)")
-            .HasConversion(
-                poly => new NetTopologySuite.Geometries.Polygon(
-                    new NetTopologySuite.Geometries.LinearRing(
-                        poly.Coordinates.Select(c => new NetTopologySuite.Geometries.Coordinate(c.X, c.Y)).ToArray()
-                    )
-                ) { SRID = poly.Srid },
-                poly => Polygon.Create(
-                    poly.ExteriorRing.Coordinates.Select(c => Point.Create(c.X, c.Y, (int)poly.SRID)), 
-                    (int)poly.SRID
-                )
-            );
+        
+        builder.Property(e => e.Area)
+            .HasColumnType("geography(Polygon,4326)")
+            .HasColumnName("ubication_coordinates");
     }
 }

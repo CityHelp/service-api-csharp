@@ -120,7 +120,17 @@ ON DELETE SET NULL
 
 CREATE INDEX idx_cuadrantes_id ON cuadrantes(police_cai_id);
 
+
+
 --- INFORMACION principal para el sistema de directorio
+-- Categorias de sitios de emergencia
+INSERT INTO emergency_site_categories(category)
+VALUES ('Policia'),
+('Bomberos'),
+('Cruz Roja'),
+('Defensa Civil'),
+('Transito'),
+('EPM')
 
 ------------------------------------------------------------
 -- 1. ESTACIÓN DE POLICÍA POPULAR (id = 1)

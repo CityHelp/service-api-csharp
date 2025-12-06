@@ -22,15 +22,6 @@ public class ReportConfiguration : IEntityTypeConfiguration<Report>
             .IsRequired()
             .HasColumnType("text");
 
-        // Spatial Mapping for Point
-        builder.Property(r => r.UbicationCoordinates)
-            .IsRequired()
-            .HasColumnType("geometry(Point, 4326)") 
-            .HasConversion(
-                p => new NetTopologySuite.Geometries.Point(p.X, p.Y) { SRID = p.Srid },
-                p => Point.Create(p.X, p.Y, p.SRID)
-            );
-
         builder.Property(r => r.DateReport)
             .IsRequired();
 
@@ -47,5 +38,9 @@ public class ReportConfiguration : IEntityTypeConfiguration<Report>
             .WithMany(c => c.Reports)
             .HasForeignKey(r => r.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Property(e => e.UbicationCoordinates)
+            .HasColumnType("geometry(Point,4326)")
+            .HasColumnName("ubication_coordinates");
     }
 }

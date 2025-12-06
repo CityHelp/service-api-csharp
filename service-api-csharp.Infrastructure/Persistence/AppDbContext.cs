@@ -1,5 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using service_api_csharp.Domain.Entities;
+using service_api_csharp.Domain.ValueObjects;
+using Point = NetTopologySuite.Geometries.Point;
+
 
 namespace service_api_csharp.Infrastructure.Persistence;
 
@@ -21,8 +26,10 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }
 }
+
