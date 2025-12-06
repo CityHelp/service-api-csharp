@@ -43,9 +43,10 @@ RUN dotnet publish service-api-csharp.API/service-api-csharp.API.csproj -c Relea
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 
 WORKDIR /app
-COPY service-api-csharp.API/appsettings.json ./appsettings.json
+
 EXPOSE 8080
 
 COPY --from=publish /app/publish .
+COPY service-api-csharp.API/appsettings.json ./appsettings.json
 
 ENTRYPOINT ["dotnet", "service-api-csharp.API.dll"]
