@@ -21,7 +21,7 @@ Este proyecto implementa **Clean Architecture** con las siguientes capas:
 │      Infrastructure Layer               │  ← Implementaciones (DB, Services)
 └─────────────────────────────────────────┘
 ```
-
+Testeando cambios para ver si funciona
 ### Principios Aplicados
 
 - ✅ **Clean Architecture**: Separación de responsabilidades en capas
