@@ -2,16 +2,11 @@ version: '3.8'
 
 services:
   api:
+    image: api-csharp
     build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: service-api-csharp
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: sapi
     restart: unless-stopped
-     
     ports:
-      - "2020:2020"
-
-    env_file:
-      - ../service-api-csharp.API/.env
-    
-
+      - "2020:8080"
