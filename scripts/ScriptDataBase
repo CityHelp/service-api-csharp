@@ -90,9 +90,19 @@ CREATE TABLE emergency_sites (
 
     FOREIGN KEY (id_sector) REFERENCES city_sectors(id)
     ON UPDATE CASCADE
+    ON DELETE SET NULL,
+
+	category_id INT,
+	FOREIGN KEY (category_id)
+    REFERENCES emergency_site_categories(id)
+    ON UPDATE CASCADE
     ON DELETE SET NULL
 );
 
+CREATE TABLE emergency_site_categories(
+id SERIAL PRIMARY KEY,
+category VARCHAR(400) NOT NULL
+);
 
 CREATE INDEX idx_emergency_sector_id ON emergency_sites(id_sector);
 CREATE INDEX idx_emergency_coordinates ON emergency_sites USING GIST (ubication_coordinates);
@@ -355,4 +365,15 @@ INSERT INTO emergency_sites (
 ('Bomberos San Antonio de Prado', '123',
   ST_GeogFromText('POINT(-75.64659453377377 6.176033060388236)'),
   'Cl 41 Sur #60D-01', 'Atención las 24h', 22);
+
+
+-- EPM
+INSERT INTO emergency_sites (
+  name_site, phone, ubication_coordinates, ubication_direction, description, id_sector
+) VALUES
+('Sede Administrativa EPM', '604 448 6960',
+  ST_GeogFromText('POINT(-75.57780252435704 6.245461462156601)'),
+  'Cra 58 Nº 42-125', 'Lunes a viernes 7:30 - 12:30 | 13:30 - 17:30', null)
+
+
 

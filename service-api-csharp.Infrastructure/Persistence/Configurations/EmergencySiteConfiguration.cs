@@ -33,10 +33,14 @@ public class EmergencySiteConfiguration : IEntityTypeConfiguration<EmergencySite
             .IsRequired()
             .HasColumnType("geometry(Point, 4326)")
             .HasConversion(
-                p => new NetTopologySuite.Geometries.Point(p.X, p.Y) { SRID = p.Srid },
-                p => Point.Create(p.X, p.Y, p.SRID)
+                p => new NetTopologySuite.Geometries.Point(p.X, p.Y)
+                {
+                    SRID = p.Srid == 0 ? 4326 : p.Srid
+                },
+                p => Point.Create(p.X, p.Y, p.SRID == 0 ? 4326 : p.SRID)
             )
             .HasColumnName("ubication_coordinates");
+
 
         builder.Property(e => e.UbicationDirection)
             .IsRequired()
@@ -49,7 +53,10 @@ public class EmergencySiteConfiguration : IEntityTypeConfiguration<EmergencySite
 
         builder.HasOne(e => e.Sector)
             .WithMany(s => s.EmergencyCities)
-            .HasForeignKey(e => e.IdSector)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(e => e.SectorId);
+
+        builder.HasOne(e => e.Category)
+            .WithMany(c => c.EmergencySites)
+            .HasForeignKey(e => e.CategoryId);
     }
 }

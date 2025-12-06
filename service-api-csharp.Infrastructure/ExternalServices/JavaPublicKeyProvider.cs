@@ -1,5 +1,8 @@
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using service_api_csharp.Application.Common.RepositoriesInterfaces.Others;
+using Microsoft.IdentityModel.Tokens;
+using service_api_csharp.Infrastructure.Helpers;
 
 namespace service_api_csharp.Infrastructure.ExternalServices;
 
@@ -12,43 +15,46 @@ public class JavaPublicKeyProvider : IJavaPublicKeyProvider
 
     public JavaPublicKeyProvider(
         HttpClient httpClient,
-        IMemoryCache cache)
+        IMemoryCache cache,
+        IOptions<AuthSettings> options)
     {
         _httpClient = httpClient;   
         _cache = cache;
     }
 
-    public async Task<string> GetPublicKeyAsync()
+    public async Task<IEnumerable<SecurityKey>> GetPublicKeysAsync()
     {
-        // Intentar obtener la llave desde el caché
-        if (_cache.TryGetValue(CacheKey, out string? cachedKey) && cachedKey != null)
+        string? jwksJson = null;
+        
+        // Intentar obtener el JWKS desde el caché
+        if (!_cache.TryGetValue<string>(CacheKey, out jwksJson) || string.IsNullOrWhiteSpace(jwksJson))
         {
-            return cachedKey;
-        }
-
-        try
-        {
-            var response = await _httpClient.GetAsync("/api/auth/public-key");
-            response.EnsureSuccessStatusCode();
-
-            var publicKey = await response.Content.ReadAsStringAsync();
-
-            if (string.IsNullOrWhiteSpace(publicKey))
+            try
             {
-                throw new InvalidOperationException("La llave pública recibida está vacía");
+                var response = await _httpClient.GetAsync("");
+                response.EnsureSuccessStatusCode();
+
+                jwksJson = await response.Content.ReadAsStringAsync();
+
+                if (string.IsNullOrWhiteSpace(jwksJson))
+                {
+                    throw new InvalidOperationException("JWKS not found");
+                }
+
+                // Cachear el JWKS por 30 minutos
+                _cache.Set(CacheKey, jwksJson, new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = CacheDuration
+                });
             }
-
-            // Cachear la llave pública por 30 minutos para evitar llamadas frecuentes
-            _cache.Set(CacheKey, publicKey, new MemoryCacheEntryOptions
+            catch (HttpRequestException ex)
             {
-                AbsoluteExpirationRelativeToNow = CacheDuration
-            });
-                        
-            return publicKey;
+                throw new InvalidOperationException("An error ocurrered while obtain JWKS", ex);
+            }
         }
-        catch (HttpRequestException ex)
-        {
-            throw new InvalidOperationException("No se pudo obtener la llave pública del servicio de autenticación", ex);
-        }
+
+        // Parsear el JWKS y retornar las llaves
+        var keySet = new JsonWebKeySet(jwksJson!);
+        return keySet.GetSigningKeys();
     }
 }

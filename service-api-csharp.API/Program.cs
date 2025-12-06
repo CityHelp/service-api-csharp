@@ -1,32 +1,35 @@
-using service_api_csharp.Infrastructure;
 using DotNetEnv;
-using Microsoft.AspNetCore.Authentication;
-using service_api_csharp.API.Authentication;
+using service_api_csharp.Infrastructure;
 using service_api_csharp.Application;
-using Microsoft.AspNetCore.Authorization;
 
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-builder.Services.AddControllers(); // Agregar soporte para controllers
+//generic things
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = "CustomJwtScheme";
-    options.DefaultChallengeScheme = "CustomJwtScheme";
-})
-    .AddScheme<AuthenticationSchemeOptions, CustomJwtHandler>("CustomJwtScheme", null);
 
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .AddAuthenticationSchemes("CustomJwtScheme")
-        .RequireAuthenticatedUser()
-        .Build();
-});
-
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultAuthenticateScheme = "CustomJwtScheme";
+//     options.DefaultChallengeScheme = "CustomJwtScheme";
+// })
+//     .AddScheme<AuthenticationSchemeOptions, CustomJwtHandler>("CustomJwtScheme", null);
+//
+// builder.Services.AddAuthorization(options =>
+// {
+//     options.FallbackPolicy = new AuthorizationPolicyBuilder()
+//         .AddAuthenticationSchemes("CustomJwtScheme")
+//         .RequireAuthenticatedUser()
+//         .Build();
+// });
 
 var services = builder.Services;
 var configuration = builder.Configuration;
@@ -39,14 +42,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
+// Healthcheck
+app.MapMethods("/health", new[] { "HEAD" }, () => Results.Ok());
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 // Mapear los controllers
 app.MapControllers();
