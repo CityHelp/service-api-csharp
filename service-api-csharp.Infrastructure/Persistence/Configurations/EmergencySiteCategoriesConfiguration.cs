@@ -12,6 +12,9 @@ public class EmergencySiteCategoriesConfiguration : IEntityTypeConfiguration<Eme
         
         builder.HasKey(c => c.Id);
 
+        builder.Property(c => c.Id)
+            .HasColumnName("id");
+
         builder.Property(c => c.Category)
             .IsRequired()
             .HasColumnName("category")

@@ -8,20 +8,33 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
     private readonly GeometryFactory _geometryFactory;
-    private ISystemDirectoriesRepository _systemDirectories;
+    public ISystemDirectoriesRepository SystemDirectories { get; }
 
-    public UnitOfWork(AppDbContext context, GeometryFactory geometryFactory)
+    public UnitOfWork(AppDbContext context, GeometryFactory geometryFactory,  ISystemDirectoriesRepository systemDirectoriesRepository)
     {
         _context = context;
         _geometryFactory = geometryFactory;
+        SystemDirectories = systemDirectoriesRepository;
     }
 
-    public ISystemDirectoriesRepository SystemDirectories => 
-        _systemDirectories ??= new SystemDirectoriesRepository(_context, _geometryFactory);
+    public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
 
-    public async Task<int> SaveChangesAsync()
+    public async Task BeginTransactionAsync()
     {
-        return await _context.SaveChangesAsync();
+        if (_context.Database.CurrentTransaction == null)
+            await _context.Database.BeginTransactionAsync();
+    }
+
+    public async Task CommitTransactionAsync()
+    {
+        if (_context.Database.CurrentTransaction != null)
+            await _context.Database.CommitTransactionAsync();
+    }
+
+    public async Task RollbackTransactionAsync()
+    {
+        if (_context.Database.CurrentTransaction != null)
+            await _context.Database.RollbackTransactionAsync();
     }
 
     public void Dispose()

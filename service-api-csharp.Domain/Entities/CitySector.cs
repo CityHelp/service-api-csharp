@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NetTopologySuite.Geometries;
 using service_api_csharp.Domain.ValueObjects;
 
 namespace service_api_csharp.Domain.Entities;
