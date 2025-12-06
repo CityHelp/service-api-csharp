@@ -1,6 +1,7 @@
 name: Deploy API to Server
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [ closed ]
     branches: [ "main" ]
