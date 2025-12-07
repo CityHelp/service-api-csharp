@@ -46,7 +46,7 @@ WORKDIR /app
 
 COPY --from=publish /app/publish .
 
-COPY service-api-csharp.API/appsettings.json ./appsettings.json
+COPY service-api-csharp/service-api-csharp.API/appsettings.json ./appsettings.json
 
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "service-api-csharp.API.dll"]
