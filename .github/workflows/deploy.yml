@@ -44,8 +44,8 @@ jobs:
       - name: Deploy on server via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_SERVER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             # Entra al proyecto y actualiza el repositorio

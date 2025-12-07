@@ -4,7 +4,13 @@ using service_api_csharp.Application;
 
 Env.Load();
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = Directory.GetCurrentDirectory()
+});
+
+builder.Configuration.Sources.Clear();
 
 //generic things
 builder.Services.AddControllers();
