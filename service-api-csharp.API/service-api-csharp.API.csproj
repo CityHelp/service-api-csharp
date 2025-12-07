@@ -17,4 +17,8 @@
     <ProjectReference Include="..\service-api-csharp.Infrastructure\service-api-csharp.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="appsettings.json" />
+  </ItemGroup>
+
 </Project>
