@@ -41,7 +41,6 @@
 **/.env
 **/.env.local
 **/.env.*.local
-**/appsettings.Development.json
 
 # Node modules (si tienes frontend)
 **/node_modules/

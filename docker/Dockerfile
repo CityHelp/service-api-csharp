@@ -36,7 +36,7 @@ RUN dotnet publish service-api-csharp.API/service-api-csharp.API.csproj -c Relea
     --no-restore \
     /p:UseAppHost=false
 
-
+COPY service-api-csharp.API/appsettings.json /app/publish/appsettings.json
 # =============================
 # Etapa 4: Runtime
 # =============================
@@ -45,8 +45,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 
 COPY --from=publish /app/publish .
-
-COPY service-api-csharp/service-api-csharp.API/appsettings.json ./appsettings.json
 
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "service-api-csharp.API.dll"]
