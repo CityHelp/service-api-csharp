@@ -5,7 +5,8 @@
 
 # dotenv files
 .env
-docker/docker-compose.yml
+appsettings.json
+appsettings.*.json
 
 # User-specific files
 *.rsuser
@@ -393,7 +394,7 @@ FodyWeavers.xsd
 
 # Local History for Visual Studio Code
 .history/
-
+appsettings.json
 # Windows Installer files from build outputs
 *.cab
 *.msi
