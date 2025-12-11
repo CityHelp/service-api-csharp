@@ -10,14 +10,14 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
     ContentRootPath = Directory.GetCurrentDirectory()
 });
 
-builder.Configuration.Sources.Clear();
+// Configuration loading order: appsettings.json -> environment variables
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
+builder.Configuration.AddEnvironmentVariables();
 
 //generic things
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
-builder.Configuration.AddEnvironmentVariables();
 
 
 // builder.Services.AddAuthentication(options =>
