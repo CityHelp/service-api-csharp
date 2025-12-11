@@ -12,35 +12,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Obtiene el repositorio
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Genera versión auto-incremental basada en el número de ejecución
       - name: Generate auto version
         run: echo "IMAGE_VERSION=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
-      
-      # Inicia sesión en Docker Hub
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
-      # Construye la imagen con el código actualizado
+
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.DOCKERHUB_REPO }}:latest \
                        -t ${{ secrets.DOCKERHUB_REPO }}:${IMAGE_VERSION} \
                        -f docker/Dockerfile .
-      
-      # Empuja ambas imágenes a Docker Hub (latest + incremental)
+
       - name: Push Docker images
         run: |
           docker push ${{ secrets.DOCKERHUB_REPO }}:latest
           docker push ${{ secrets.DOCKERHUB_REPO }}:${IMAGE_VERSION}
-      
-      # Conexión al servidor y despliegue con docker-compose
+
       - name: Deploy on server via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -48,15 +42,19 @@ jobs:
           username: ${{ secrets.USER_SERVER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Entra al proyecto y actualiza el repositorio
-            cd ${{ secrets.SERVER_PROJECT_PATH }}
-            git pull origin main
+            export DOCKERHUB_REPO=${{ secrets.DOCKERHUB_REPO }}
 
-            # Detiene contenedores actuales del stack
+            cd ${{ secrets.SERVER_PROJECT_PATH }}
+            
+            # Sobrescribe todo el repositorio local
+            git fetch --all
+            git reset --hard origin/main
+
+            # Detiene contenedores actuales
             docker compose -f docker/docker-compose.yml down || true
 
-            # Descarga la última imagen desde Docker Hub
-            docker pull ${{ secrets.DOCKERHUB_REPO }}:latest
+            # Descarga la última imagen del repositorio remoto
+            docker pull $DOCKERHUB_REPO:latest
 
-            # Levanta el stack usando docker-compose
-            docker compose -f docker/docker-compose.yml up -d
+            # Levanta contenedores con la imagen descargada
+            docker compose -f docker/docker-compose.yml up -d --force-recreate
