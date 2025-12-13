@@ -23,10 +23,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.Identification)
             .IsUnique();
 
-        builder.Property(u => u.Name)
+        builder.Property(u => u.FirstName)
             .IsRequired()
             .HasMaxLength(200)
-            .HasColumnName("name");
+            .HasColumnName("first_name");
 
         builder.Property(u => u.LastName)
             .IsRequired()
@@ -41,9 +41,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.Email)
             .IsUnique();
 
-        builder.Property(u => u.PasswordHash)
+        builder.Property(u => u.Password)
             .HasColumnType("text")
-            .HasColumnName("password_hash");
+            .HasColumnName("password");
 
         builder.Property(u => u.GoogleId)
             .HasMaxLength(500)
@@ -52,41 +52,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.GoogleId)
             .IsUnique();
 
-        builder.Property(u => u.AuthProvider)
-            .IsRequired()
-            .HasMaxLength(200)
-            .HasColumnName("auth_provider");
-
         builder.Property(u => u.IsVerified)
             .IsRequired()
             .HasDefaultValue(false)
             .HasColumnName("is_verified");
 
-        builder.Property(u => u.VerificationToken)
-            .HasMaxLength(200)
-            .HasColumnName("verification_token");
-
-        builder.Property(u => u.TokenExpiryDate)
-            .HasColumnName("token_expiry_date");
-
         builder.Property(u => u.Role)
             .IsRequired()
             .HasMaxLength(200)
             .HasColumnName("role");
-
-        builder.Property(u => u.ResetPasswordToken)
-            .HasMaxLength(200)
-            .HasColumnName("reset_password_token");
-
-        builder.Property(u => u.ResetTokenExpiresAt)
-            .HasColumnName("reset_token_expires_at");
-
-        builder.Property(u => u.AvatarUrl)
-            .HasColumnType("text")
-            .HasColumnName("avatar_url");
-
-        builder.Property(u => u.LastLogin)
-            .HasColumnName("last_login");
 
         builder.Property(u => u.Status)
             .IsRequired()
