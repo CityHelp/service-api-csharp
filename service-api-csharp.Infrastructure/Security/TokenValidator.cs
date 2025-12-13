@@ -46,8 +46,10 @@ public class TokenValidator : ITokenValidator
                 ErrorMessage = null
             };
         }
-        catch (SecurityTokenExpiredException)
+        catch (SecurityTokenExpiredException ex)
         {
+            _logger.LogWarning(ex, "Token validation failed: Token has expired");
+            
             return new service_api_csharp.Application.POCOs.TokenValidationResult
             {
                 IsValid = false,
@@ -55,8 +57,10 @@ public class TokenValidator : ITokenValidator
                 ErrorMessage = "El token ha expirado"
             };
         }
-        catch (SecurityTokenException)
+        catch (SecurityTokenException ex)
         {
+            _logger.LogWarning(ex, "Token validation failed: Invalid token");
+            
             return new service_api_csharp.Application.POCOs.TokenValidationResult
             {
                 IsValid = false,
@@ -64,8 +68,10 @@ public class TokenValidator : ITokenValidator
                 ErrorMessage = "Token inválido"
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Unexpected error occurred while validating token");
+            
             return new service_api_csharp.Application.POCOs.TokenValidationResult
             {
                 IsValid = false,

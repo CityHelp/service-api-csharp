@@ -17,8 +17,11 @@
     <ProjectReference Include="..\service-api-csharp.Infrastructure\service-api-csharp.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="appsettings.json" />
-  </ItemGroup>
-
+ <ItemGroup>
+   <None Update="appsettings*.json">
+     <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+     <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+   </None>
+ </ItemGroup>
+  
 </Project>
