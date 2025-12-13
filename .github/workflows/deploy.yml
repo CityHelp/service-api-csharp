@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Generate auto version
+      - name: Generate image version
         run: echo "IMAGE_VERSION=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
 
       - name: Login to Docker Hub
@@ -26,9 +26,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_REPO }}:latest \
-                       -t ${{ secrets.DOCKERHUB_REPO }}:${IMAGE_VERSION} \
-                       -f docker/Dockerfile .
+          docker build \
+            -t ${{ secrets.DOCKERHUB_REPO }}:latest \
+            -t ${{ secrets.DOCKERHUB_REPO }}:${IMAGE_VERSION} \
+            -f docker/Dockerfile .
 
       - name: Push Docker images
         run: |
@@ -42,19 +43,32 @@ jobs:
           username: ${{ secrets.USER_SERVER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
+
             export DOCKERHUB_REPO=${{ secrets.DOCKERHUB_REPO }}
 
             cd ${{ secrets.SERVER_PROJECT_PATH }}
-            
-            # Sobrescribe todo el repositorio local
+
+            echo "📦 Syncing repository"
             git fetch --all
             git reset --hard origin/main
 
-            # Detiene contenedores actuales
+            echo "🔎 Validating runtime config"
+            if [ ! -f docker/config/appsettings.json ]; then
+              echo "❌ ERROR: docker/config/appsettings.json not found"
+              exit 1
+            fi
+
+            echo "🔎 Validating docker-compose.yml"
+            docker compose -f docker/docker-compose.yml config > /dev/null
+
+            echo "🛑 Stopping containers"
             docker compose -f docker/docker-compose.yml down || true
 
-            # Descarga la última imagen del repositorio remoto
+            echo "⬇️ Pulling latest image"
             docker pull $DOCKERHUB_REPO:latest
 
-            # Levanta contenedores con la imagen descargada
+            echo "🚀 Starting containers"
             docker compose -f docker/docker-compose.yml up -d --force-recreate
+
+            echo "✅ Deploy finished successfully"
