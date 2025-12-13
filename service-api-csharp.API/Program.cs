@@ -1,8 +1,5 @@
-using DotNetEnv;
 using service_api_csharp.Infrastructure;
 using service_api_csharp.Application;
-
-Env.Load();
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -11,7 +8,7 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 });
 
 // Configuration loading order: appsettings.json -> environment variables
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
+builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
 builder.Configuration.AddEnvironmentVariables();
 
 //generic things
