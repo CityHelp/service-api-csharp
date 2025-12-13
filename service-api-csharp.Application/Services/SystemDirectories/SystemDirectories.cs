@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using service_api_csharp.Application.Common;
 using service_api_csharp.Application.DTOs;
 using service_api_csharp.Application.InterfacesRepositories;
@@ -8,16 +9,21 @@ namespace service_api_csharp.Application.Services;
 public class SystemDirectories : ISystemDirectories
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<SystemDirectories> _logger;
 
-    public SystemDirectories(IUnitOfWork unitOfWork)
+    public SystemDirectories(IUnitOfWork unitOfWork, ILogger<SystemDirectories> logger)
     {
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
     
     public async Task<ApiResponse> GetEmergencySitesNearUbication(UbicationUserDto ubication)
     {
         try
         {
+            _logger.LogInformation("Getting emergency sites near location: Lat {Latitude}, Lon {Longitude}", 
+                ubication.Latitude, ubication.Longitude);
+
             var response = await _unitOfWork.SystemDirectories.GetEmergencySitesNearUbication(ubication);
 
             var emergencySites = response.Select(site => new EmergencySiteDto
@@ -35,10 +41,15 @@ public class SystemDirectories : ISystemDirectories
                 }
             }).ToList();
             
+            _logger.LogInformation("Successfully retrieved {Count} emergency sites near location", emergencySites.Count);
+            
             return ApiResponse.Ok(emergencySites, Messages.SystemDirectory.FoundDirectories);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Error occurred while getting emergency sites near location: Lat {Latitude}, Lon {Longitude}", 
+                ubication.Latitude, ubication.Longitude);
+            
             return ApiResponse.Fail(Messages.Errors.UnexpectedError);
         }
     }

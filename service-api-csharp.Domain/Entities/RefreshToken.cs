@@ -8,7 +8,7 @@ public class RefreshToken
     
     public string Token { get; set; } = string.Empty;
     
-    public long UserId { get; set; }
+    public Guid UserId { get; set; }
     
     public DateTimeOffset ExpiresAt { get; set; }
 

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NetTopologySuite;
 using service_api_csharp.Application.Common.RepositoriesInterfaces.Others;
@@ -28,6 +29,7 @@ public static class DependencyInjection
         {
             throw new InvalidOperationException("Missing connection string ❌.");
         }
+        
         try
         {
             services.AddDbContext<AppDbContext>(options =>
@@ -37,13 +39,17 @@ public static class DependencyInjection
                 )
             );
             
-            Console.WriteLine("Database connected ✅");
-
+            // Create a temporary service provider to get logger for configuration logging
+            var serviceProvider = services.BuildServiceProvider();
+            var logger = serviceProvider.GetRequiredService<ILogger<AppDbContext>>();
+            logger.LogInformation("Database connection configured successfully ✅");
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine("An error occurred with the database ❌");
-            Console.WriteLine(e.Message);
+            // Create a temporary service provider to get logger for error logging
+            var serviceProvider = services.BuildServiceProvider();
+            var logger = serviceProvider.GetRequiredService<ILogger<AppDbContext>>();
+            logger.LogError(ex, "An error occurred while configuring the database connection ❌");
             throw;
         }
         

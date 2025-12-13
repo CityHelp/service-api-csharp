@@ -24,9 +24,6 @@ RUN dotnet build service-api-csharp.API/service-api-csharp.API.csproj -c Release
 FROM build AS publish
 RUN dotnet publish service-api-csharp.API/service-api-csharp.API.csproj -c Release -o /app/publish --no-restore /p:UseAppHost=false
 
-# Copiar appsettings (todos los entornos)
-COPY service-api-csharp.API/appsettings*.json /app/publish/
-
 # =============================
 # Etapa 4: Runtime
 # =============================
