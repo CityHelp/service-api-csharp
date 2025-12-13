@@ -18,7 +18,8 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+ 
+ 
 
 // builder.Services.AddAuthentication(options =>
 // {
