@@ -9,6 +9,15 @@ public static class Messages
         public const string ExpiredToken = "Expired token";
     }
 
+    public static class Clodinary
+    {
+        public const string ImageUploadSucesfully = "Image uploaded successfully";
+        public const string NoFileProvided = "No file provided";
+        public const string TypeFileNotAllowed = "File type not allowed";
+        public const string FileTooBig = "File too large";
+    }
+
+
     public static class Coordinates
     {
         public const string LatitudeObligatory = "Latitude is obligatory";
@@ -32,6 +41,6 @@ public static class Messages
 
     public static class SystemDirectory
     {
-        public const string FoundDirectories = "directories near the person";
+        public const string FoundDirectories = "Directories near of the person";
     }
 }

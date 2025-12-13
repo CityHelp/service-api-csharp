@@ -32,7 +32,7 @@ CREATE TABLE reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(200) NOT NULL,
     description TEXT NOT NULL,
-    ubication_coordinates GEOGRAPHY(Point, 4326) NOT NULL,
+    ubication_coordinates GEOMETRY(Point, 4326) NOT NULL,
     date_report TIMESTAMPTZ NOT NULL,
     emergency_level VARCHAR(200) NOT NULL,
 
@@ -73,17 +73,18 @@ CREATE INDEX idx_photos_report_id ON photos_reports(report_id);
 CREATE TABLE city_sectors (
     id SERIAL PRIMARY KEY,
     name_place VARCHAR(200) NOT NULL,
-    area GEOGRAPHY(Polygon, 4326) NOT NULL,
+    area GEOMETRY(Polygon, 4326) NOT NULL,
 	number_comuna varchar(10) not null,
 );
 
 CREATE INDEX idx_city_sectors_area ON city_sectors USING GIST (area);
+selec
 
 CREATE TABLE emergency_sites (
     id SERIAL PRIMARY KEY,
 	name_site VARCHAR(200) NOT NULL,
     phone VARCHAR(200) NOT NULL UNIQUE,
-    ubication_coordinates GEOGRAPHY(Point, 4326) NOT NULL,
+    ubication_coordinates GEOMETRY(Point, 4326) NOT NULL,
     ubication_direction VARCHAR(200) NOT NULL,
 	description VARCHAR(500) NOT NULL,
     id_sector INT,
