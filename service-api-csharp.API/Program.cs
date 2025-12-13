@@ -1,11 +1,7 @@
 using service_api_csharp.Infrastructure;
 using service_api_csharp.Application;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-    Args = args,
-    ContentRootPath = Directory.GetCurrentDirectory()
-});
+var builder = WebApplication.CreateBuilder();
 
 // Configuration loading order: appsettings.json -> environment variables
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
