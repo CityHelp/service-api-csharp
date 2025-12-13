@@ -49,6 +49,7 @@
 # Logs
 **/logs/
 **/*.log
+appsettings.json
 
 # Archivos temporales
 **/tmp/
