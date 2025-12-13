@@ -50,8 +50,9 @@ jobs:
             cd ${{ secrets.SERVER_PROJECT_PATH }}
 
             echo "📦 Syncing repository"
-            git fetch --all
-            git reset --hard origin/main
+            git checkout main
+            git fetch origin
+            git pull --ff-only origin main
 
             echo "🔎 Validating runtime config"
             if [ ! -f docker/config/appsettings.json ]; then
