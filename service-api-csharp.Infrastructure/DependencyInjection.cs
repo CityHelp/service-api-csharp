@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using NetTopologySuite;
 using service_api_csharp.Application.Common.RepositoriesInterfaces.Others;
 using service_api_csharp.Application.InterfacesRepositories;
@@ -68,15 +69,36 @@ public static class DependencyInjection
         });
         // #endregion
         //
-        //Configuration
+        //Configuration Java
         services.Configure<AuthSettings>(configuration.GetSection("Auth__JavaUrl"));
+        
+        //Configuration cloudinary
+        // 1. Cargar las configuraciones de Cloudinary
+        services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
 
+        // 2. Crear y registrar la instancia de Cloudinary como Singleton
+        services.AddSingleton(sp => {
+            // Obtener las credenciales del sistema de configuración
+            var config = sp.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+
+            // Crear y devolver el objeto Account
+            var account = new CloudinaryDotNet.Account(
+                config.CloudName,
+                config.ApiKey,
+                config.ApiSecret
+            );
+    
+            // Crear y devolver el objeto Cloudinary principal
+            return new CloudinaryDotNet.Cloudinary(account);
+        });
         
         //Services
         services.AddMemoryCache();
         services.AddScoped<ITokenValidator, TokenValidator>();
         services.AddScoped<ISystemDirectoriesRepository, SystemDirectoriesRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICloudinaryUpload, CloudinaryUpload>();
+        services.AddScoped<service_api_csharp.Application.Services.Cloudinary.ICloudinaryService, service_api_csharp.Application.Services.Cloudinary.CloudinaryService>();
         services.AddSingleton(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
         
         return services;

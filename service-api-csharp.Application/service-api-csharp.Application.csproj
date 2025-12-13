@@ -23,4 +23,8 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Cloudinary\" />
+  </ItemGroup>
+
 </Project>
