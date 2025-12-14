@@ -1,6 +1,6 @@
 namespace service_api_csharp.Application.DTOs;
 
-public class ReportDto
+public class RegisterReportDto
 {
     public string Title { get; set; }
     public string Description { get; set; }
@@ -12,5 +12,5 @@ public class ReportDto
     public string Latitude { get; set; }
     public string Longitude { get; set; }
     public string DirectionReports { get; set; }
-    public string UrlImage { get; set; }
+    public ICollection<string> ListUrlImages { get; set; }
 }
