@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using service_api_csharp.API.Authentication;
 using service_api_csharp.Infrastructure;
 using service_api_csharp.Application;
 
@@ -14,20 +17,20 @@ builder.Services.AddSwaggerGen();
  
  
 
-// builder.Services.AddAuthentication(options =>
-// {
-//     options.DefaultAuthenticateScheme = "CustomJwtScheme";
-//     options.DefaultChallengeScheme = "CustomJwtScheme";
-// })
-//     .AddScheme<AuthenticationSchemeOptions, CustomJwtHandler>("CustomJwtScheme", null);
-//
-// builder.Services.AddAuthorization(options =>
-// {
-//     options.FallbackPolicy = new AuthorizationPolicyBuilder()
-//         .AddAuthenticationSchemes("CustomJwtScheme")
-//         .RequireAuthenticatedUser()
-//         .Build();
-// });
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "CustomJwtScheme";
+    options.DefaultChallengeScheme = "CustomJwtScheme";
+})
+    .AddScheme<AuthenticationSchemeOptions, CustomJwtHandler>("CustomJwtScheme", null);
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes("CustomJwtScheme")
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
 var services = builder.Services;
 var configuration = builder.Configuration;
@@ -48,8 +51,8 @@ if (app.Environment.IsDevelopment())
 app.MapMethods("/health", new[] { "HEAD" }, () => Results.Ok());
 app.UseHttpsRedirection();
 
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Mapear los controllers
 app.MapControllers();
