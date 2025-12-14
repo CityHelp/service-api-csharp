@@ -24,13 +24,7 @@ builder.Services.AddAuthentication(options =>
 })
     .AddScheme<AuthenticationSchemeOptions, CustomJwtHandler>("CustomJwtScheme", null);
 
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .AddAuthenticationSchemes("CustomJwtScheme")
-        .RequireAuthenticatedUser()
-        .Build();
-});
+builder.Services.AddAuthorization();
 
 var services = builder.Services;
 var configuration = builder.Configuration;
