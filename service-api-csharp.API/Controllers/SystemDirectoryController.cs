@@ -8,6 +8,7 @@ using service_api_csharp.Application.Services;
 namespace service_api_csharp.API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("directories")]
 public class SystemDirectoryController : ControllerBase
 {
@@ -20,6 +21,7 @@ public class SystemDirectoryController : ControllerBase
         _logger = logger;
     }
     
+    [Authorize]
     [HttpPost("emergency-sites-nearby")]
     public async Task<IActionResult> GetAllDirectories([FromBody] UbicationUserDto request)
     {

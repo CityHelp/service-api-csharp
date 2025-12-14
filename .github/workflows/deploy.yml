@@ -44,9 +44,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-
-            export DOCKERHUB_REPO=${{ secrets.DOCKERHUB_REPO }}
-
+  
             cd ${{ secrets.SERVER_PROJECT_PATH }}
 
             echo "📦 Syncing repository"

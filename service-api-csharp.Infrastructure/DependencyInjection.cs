@@ -56,27 +56,27 @@ public static class DependencyInjection
 
         #endregion
         
-        // //Jwt Service
-        // #region Jwt
-        // // ========== JWT Authentication Services ==========
-        //
-        // // Agregar caché en memoria
-        //
-        // // Configurar HttpClient para el macroservicio Java
-        var url = configuration["Auth__JavaUrl"];
-        //
-        // if (string.IsNullOrEmpty(url))
-        // {
-        //     throw new InvalidOperationException("Environment variable 'Auth__JavaUrl' not found");
-        // }
+        //Jwt Service
+        #region Jwt
+        // ========== JWT Authentication Services ==========
+        
+        // Agregar caché en memoria
+        
+        // Configurar HttpClient para el macroservicio Java
+        var url = configuration["Auth:JavaUrl"];
+        
+        if (string.IsNullOrEmpty(url))
+        {
+            throw new InvalidOperationException("Environment variable 'Auth__JavaUrl' not found");
+        }
         services.AddHttpClient<IJavaPublicKeyProvider, JavaPublicKeyProvider>(client =>
         {
              client.BaseAddress = new Uri(url);
         });
-        // #endregion
-        //
+        #endregion
+        
         //Configuration Java
-        services.Configure<AuthSettings>(configuration.GetSection("Auth__JavaUrl"));
+        services.Configure<AuthSettings>(configuration.GetSection("Auth"));
         
         //Configuration cloudinary
         // 1. Cargar las configuraciones de Cloudinary
