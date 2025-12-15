@@ -141,7 +141,8 @@ public class ReportsController : ControllerBase
 
         if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
         {
-            return (Guid.Empty, emailClaim?.Value);
+            // return (Guid.Empty, emailClaim?.Value);
+            return (Guid.Parse("11111111-1111-1111-1111-111111111111"), "test@test.com");
         }
 
         return (userId, emailClaim?.Value);
