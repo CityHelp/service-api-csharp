@@ -38,7 +38,7 @@ public class ReportsRepository : IReportsRepository
         return await _context.Reports
             .Include(r => r.Photos)
             .Include(r => r.Category)
-            .Where(r => EF.Functions.IsWithinDistance(r.UbicationCoordinates, origin, distanceInMeters))
+            .Where(r => EF.Functions.IsWithinDistance(r.UbicationCoordinates, origin, distanceInMeters, true))
             .ToListAsync(cancellationToken);
     }
 

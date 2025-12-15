@@ -41,7 +41,8 @@ public class ReportsService : IReportsService
                 return ApiResponse.Fail(Messages.Errors.GenericField, "Category not found");
             }
 
-            var ubication = _geometryFactory.CreatePoint(new Coordinate(longitude, latitude)) { SRID = 4326 };
+            var ubication = _geometryFactory.CreatePoint(new Coordinate(longitude, latitude));
+            ubication.SRID = 4326;
 
             var report = new Report
             {
@@ -74,7 +75,7 @@ public class ReportsService : IReportsService
         {
             await _unitOfWork.RollbackTransactionAsync();
             _logger.LogError(ex, "Error registering report for user {UserId}", userId);
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
+            return ApiResponse.Fail("DEBUG: " + ex.Message, ex.ToString());
         }
     }
 
@@ -87,7 +88,8 @@ public class ReportsService : IReportsService
 
         try
         {
-            var origin = _geometryFactory.CreatePoint(new Coordinate(longitude, latitude)) { SRID = 4326 };
+            var origin = _geometryFactory.CreatePoint(new Coordinate(longitude, latitude));
+            origin.SRID = 4326;
             var reports = await _unitOfWork.Reports.GetReportsWithinDistanceAsync(origin, 3000, cancellationToken);
 
             var response = reports.Select(report => new
@@ -108,7 +110,7 @@ public class ReportsService : IReportsService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving reports within 3km");
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
         }
     }
 
@@ -141,7 +143,7 @@ public class ReportsService : IReportsService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating report {ReportId}", request.ReportId);
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
         }
     }
 
@@ -182,7 +184,7 @@ public class ReportsService : IReportsService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing delete request for report {ReportId}", request.ReportId);
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
         }
     }
 
@@ -210,7 +212,7 @@ public class ReportsService : IReportsService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting report {ReportId}", reportId);
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
         }
     }
 
@@ -240,7 +242,7 @@ public class ReportsService : IReportsService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving reports for user {UserId}", userId);
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
         }
     }
 }
