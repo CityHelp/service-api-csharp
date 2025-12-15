@@ -9,6 +9,7 @@ public static class DependencyInjection
     {
 
         services.AddScoped<ISystemDirectories, SystemDirectories>();
+        services.AddScoped<IReportsService, ReportsService>();
         return services;
     }
 }
