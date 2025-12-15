@@ -4,6 +4,8 @@ using service_api_csharp.API.Authentication;
 using service_api_csharp.Infrastructure;
 using service_api_csharp.Application;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder();
 
 // Configuration loading order: appsettings.json -> environment variables

@@ -22,8 +22,32 @@
     
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            string? token = Request.Headers["Authorization"]
-                .FirstOrDefault()?.Split(" ").Last();
+            if (!Request.Headers.TryGetValue("Authorization", out var authorizationHeaderValues))
+                return AuthenticateResult.NoResult();
+
+            var authorizationHeader = authorizationHeaderValues.FirstOrDefault();
+            
+            // Debug logging
+            Logger.LogWarning("Auth Header Received: '{Header}'", authorizationHeader);
+
+            if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                Logger.LogWarning("Auth Header invalid or missing Bearer prefix");
+                return AuthenticateResult.NoResult();
+            }
+
+            var token = authorizationHeader.Substring("Bearer ".Length).Trim();
+            
+            // Clean up token in case user pasted "token", ... or whole JSON
+            if (token.Contains(","))
+            {
+                token = token.Split(',')[0];
+            }
+            token = token.Trim().Trim('"');
+
+            // Debug logging
+            Logger.LogWarning("Extracted Token (Sanitized): '{Token}'", token);
+
 
             if (string.IsNullOrEmpty(token))
                 return AuthenticateResult.NoResult();
