@@ -102,6 +102,7 @@ public static class DependencyInjection
         services.AddMemoryCache();
         services.AddScoped<ITokenValidator, TokenValidator>();
         services.AddScoped<ISystemDirectoriesRepository, SystemDirectoriesRepository>();
+        services.AddScoped<IReportsRepository, ReportsRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICloudinaryUpload, CloudinaryUpload>();
         services.AddScoped<service_api_csharp.Application.Services.Cloudinary.ICloudinaryService, service_api_csharp.Application.Services.Cloudinary.CloudinaryService>();

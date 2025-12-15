@@ -29,6 +29,13 @@ public class ReportConfiguration : IEntityTypeConfiguration<Report>
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(r => r.NumDeleteReportRequest)
+            .HasColumnName("num_delete_report_request")
+            .HasDefaultValue(0);
+
+        builder.Property(r => r.DeleteRequestUserIds)
+            .HasColumnName("delete_request_user_ids");
+
         builder.HasOne(r => r.User)
             .WithMany(u => u.Reports)
             .HasForeignKey(r => r.UserId)

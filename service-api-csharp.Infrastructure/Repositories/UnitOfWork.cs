@@ -9,12 +9,14 @@ public class UnitOfWork : IUnitOfWork
     private readonly AppDbContext _context;
     private readonly GeometryFactory _geometryFactory;
     public ISystemDirectoriesRepository SystemDirectories { get; }
+    public IReportsRepository Reports { get; }
 
-    public UnitOfWork(AppDbContext context, GeometryFactory geometryFactory,  ISystemDirectoriesRepository systemDirectoriesRepository)
+    public UnitOfWork(AppDbContext context, GeometryFactory geometryFactory,  ISystemDirectoriesRepository systemDirectoriesRepository, IReportsRepository reportsRepository)
     {
         _context = context;
         _geometryFactory = geometryFactory;
         SystemDirectories = systemDirectoriesRepository;
+        Reports = reportsRepository;
     }
 
     public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
