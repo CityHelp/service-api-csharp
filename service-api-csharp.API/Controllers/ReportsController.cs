@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using service_api_csharp.Application.Common;
 using service_api_csharp.Application.DTOs;
 using service_api_csharp.Application.Services;
@@ -22,6 +23,7 @@ public class ReportsController : ControllerBase
     }
 
     [HttpPost]
+    [Route("register")]
     public async Task<IActionResult> RegisterReport([FromBody] RegisterReportDto request)
     {
         if (!ModelState.IsValid)
@@ -29,16 +31,24 @@ public class ReportsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var (userId, email) = GetUserIdentity();
+        var userId = GetUserIdentity();
 
-        if (userId == Guid.Empty)
+        if (userId is null)
+            return Unauthorized();
+
+        var response = await _reportsService.RegisterReportAsync(request, userId.Value);
+
+        if (!response.Success)
         {
-            return Unauthorized(ApiResponse.Fail(Messages.Errors.Unauthorized));
+            if (response.Message == Messages.Errors.UnexpectedError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+            
+            return BadRequest(response);
         }
-
-        var response = await _reportsService.RegisterReportAsync(request, userId, email);
-
-        return response.Success ? Ok(response) : BadRequest(response);
+        
+        return StatusCode(StatusCodes.Status201Created, response);
     }
 
     [HttpPost("radio-3km")]
@@ -51,69 +61,104 @@ public class ReportsController : ControllerBase
 
         var response = await _reportsService.GetReportsWithin3KmAsync(request);
 
-        return response.Success ? Ok(response) : BadRequest(response);
+        if (!response.Success)
+        {
+            if (response.Message == Messages.Errors.UnexpectedError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+            
+            return BadRequest(response);
+        }
+        
+        return Ok(response);
     }
+
+    // [HttpPut]
+    // public async Task<IActionResult> UpdateReport([FromBody] UpdateReportDto request)
+    // {
+    //     if (!ModelState.IsValid)
+    //     {
+    //         return BadRequest(ModelState);
+    //     }
+    //
+    //     var userId = GetUserIdentity();
+    //
+    //     if (userId is null)
+    //     {
+    //         return Unauthorized();
+    //     }
+    //
+    //     var response = await _reportsService.UpdateReportAsync(request, userId.Value);
+    //
+    //     if (!response.Success)
+    //     {
+    //         if (response.Message == Messages.Errors.Unauthorized)
+    //         {
+    //             return Unauthorized();
+    //         }
+    //
+    //         if (response.Message == Messages.Errors.UnexpectedError)
+    //         {
+    //             return StatusCode(StatusCodes.Status500InternalServerError, response);
+    //         }
+    //         return BadRequest(response);
+    //     }
+    //
+    //     return Ok(response);
+    // }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateReport([FromBody] UpdateReportDto request)
+    [Route("request-delete")]
+     public async Task<IActionResult> RequestDelete([FromBody] DeleteReportDto request)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var (userId, _) = GetUserIdentity();
+        var userId = GetUserIdentity();
 
-        if (userId == Guid.Empty)
+        if (userId is null)
         {
-            return Unauthorized(ApiResponse.Fail(Messages.Errors.Unauthorized));
+            return Unauthorized();
         }
 
-        var response = await _reportsService.UpdateReportAsync(request, userId);
-
-        if (!response.Success && response.Message == Messages.Errors.Unauthorized)
+        var response = await _reportsService.RequestDeleteReportAsync(request, userId.Value);
+        
+        if (!response.Success)
         {
-            return Unauthorized(response);
+            if (response.Message == Messages.Errors.Unauthorized)
+            {
+                return Unauthorized();
+            }
+
+            if (response.Message == Messages.Errors.UnexpectedError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+            return BadRequest(response);
         }
 
-        return response.Success ? Ok(response) : BadRequest(response);
+        return Ok(response);
     }
 
-    [HttpPost("delete-request")]
-    public async Task<IActionResult> RequestDelete([FromBody] DeleteReportDto request)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        var (userId, _) = GetUserIdentity();
-
-        if (userId == Guid.Empty)
-        {
-            return Unauthorized(ApiResponse.Fail(Messages.Errors.Unauthorized));
-        }
-
-        var response = await _reportsService.RequestDeleteReportAsync(request, userId);
-
-        return response.Success ? Ok(response) : BadRequest(response);
-    }
-
-    [HttpDelete("{reportId}")]
+    [HttpDelete]
+    [Route("delete/{reportId}")]
     public async Task<IActionResult> DeleteReport(Guid reportId)
     {
-        var (userId, _) = GetUserIdentity();
+        var userId = GetUserIdentity();
 
-        if (userId == Guid.Empty)
+        if (userId is null)
         {
-            return Unauthorized(ApiResponse.Fail(Messages.Errors.Unauthorized));
+            return Unauthorized();
         }
 
-        var response = await _reportsService.DeleteReportDirectlyAsync(reportId, userId);
+        var response = await _reportsService.DeleteReportDirectlyAsync(reportId, userId.Value);
 
         if (!response.Success && response.Message == Messages.Errors.Unauthorized)
         {
-            return Unauthorized(response);
+            return Unauthorized();
         }
 
         return response.Success ? Ok(response) : BadRequest(response);
@@ -122,29 +167,42 @@ public class ReportsController : ControllerBase
     [HttpGet("mine")]
     public async Task<IActionResult> GetMyReports()
     {
-        var (userId, _) = GetUserIdentity();
+        var userId = GetUserIdentity();
 
-        if (userId == Guid.Empty)
+        if (userId is null)
         {
-            return Unauthorized(ApiResponse.Fail(Messages.Errors.Unauthorized));
+            return Unauthorized();
         }
 
-        var response = await _reportsService.GetReportsByUserAsync(userId);
+        var response = await _reportsService.GetReportsByUserAsync(userId.Value);
+        
+        if (!response.Success)
+        {
+            if (response.Message == Messages.Errors.Unauthorized)
+            {
+                return Unauthorized();
+            }
 
-        return response.Success ? Ok(response) : BadRequest(response);
+            if (response.Message == Messages.Errors.UnexpectedError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+            return BadRequest(response);
+        }
+
+        return Ok(response);
     }
 
-    private (Guid userId, string? email) GetUserIdentity()
+    private int? GetUserIdentity()
     {
-        var userIdClaim = User.FindFirst("userId") ?? User.FindFirst(ClaimTypes.NameIdentifier);
-        var emailClaim = User.FindFirst("email") ?? User.FindFirst(ClaimTypes.Email);
+        var claim = User.FindFirst("userId")?.Value;
 
-        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
-        {
-            // return (Guid.Empty, emailClaim?.Value);
-            return (Guid.Parse("11111111-1111-1111-1111-111111111111"), "test@test.com");
-        }
+        if (string.IsNullOrWhiteSpace(claim))
+            return null;
 
-        return (userId, emailClaim?.Value);
+        if (!int.TryParse(claim, out var userId))
+            return null;
+
+        return userId;
     }
 }
