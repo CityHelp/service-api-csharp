@@ -31,12 +31,14 @@ public class EmailCodeConfiguration : IEntityTypeConfiguration<EmailVerification
         // Expires At (expires_at: timestampz -> DateTimeOffset)
         builder.Property(e => e.ExpiresAt)
             .IsRequired()
-            .HasColumnName("expires_at");
+            .HasColumnName("expires_at")
+            .HasColumnType("timestamp without time zone");
 
         // Created At (created_at: timestampz -> DateTimeOffset)
         builder.Property(e => e.CreatedAt)
             .IsRequired()
-            .HasColumnName("created_at");
+            .HasColumnName("created_at")
+            .HasColumnType("timestamp without time zone");
 
         // Is Used (is_used: bool -> bool)
         builder.Property(e => e.IsUsed)

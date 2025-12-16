@@ -20,8 +20,8 @@ public class PhotoReportConfiguration : IEntityTypeConfiguration<PhotoReport>
             .HasColumnName("photo_url");
 
         builder.HasOne(p => p.Report)
-            .WithMany(r => r.Photos)
-            .HasForeignKey(p => p.ReportId)
+            .WithOne(r => r.Photo)
+            .HasForeignKey<PhotoReport>(p => p.ReportId)
             .OnDelete(DeleteBehavior.Cascade);
             
         builder.Property(p => p.ReportId).HasColumnName("report_id");

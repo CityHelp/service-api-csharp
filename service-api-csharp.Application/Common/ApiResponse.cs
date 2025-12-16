@@ -11,7 +11,7 @@ public class ApiResponse
     {
     }
 
-    public static ApiResponse Ok(object? data = null, string? message = null)
+    public static ApiResponse Ok(string? message = null ,object? data = null)
         => new() { Success = true, Message = message, Data = data };
 
     public static ApiResponse Fail(string message, params string[] errors)

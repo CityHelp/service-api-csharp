@@ -3,12 +3,7 @@ using service_api_csharp.Application.DTOs;
 namespace service_api_csharp.Application.Common;
 
 public static class Messages
-{
-    public static class Jwt
-    {
-        public const string ExpiredToken = "Expired token";
-    }
-
+{ 
     public static class Clodinary
     {
         public const string ImageUploadSucesfully = "Image uploaded successfully";
@@ -16,7 +11,6 @@ public static class Messages
         public const string TypeFileNotAllowed = "File type not allowed";
         public const string FileTooBig = "File too large";
     }
-
 
     public static class Coordinates
     {
@@ -33,14 +27,27 @@ public static class Messages
     {
         public const string GenericField = "Invalid fields";
         public const string UnexpectedError = "An unexpected error occured";
-        public const string InvalidCredentials = "Invalid credentials";
-        public const string InvalidCredentialsError = "Email o password not found";
         public const string Unauthorized = "Unauthorized";
-        public const string InvalidToken = "Invalid token";
     }
 
     public static class SystemDirectory
     {
         public const string FoundDirectories = "Directories near of the person";
+    }
+
+    public static class ReportsCategories
+    {
+        public const string CategorNotFound = "Category not found";
+    }
+
+    public static class Reports
+    {
+        public const string ReportsFound = "Reports found";
+        public const string ReportRegistered = "Report created successfully";
+        public const string ReportDeleted = "Report deleted successfully";
+        public const string ReportUpdated = "Report updated successfully";
+        public const string ReportNotFound = "Report not found";
+        public const string AlreadyRequestDeletion = "User already request deletion";
+        public const string RegisteredRequestDeletion = "Registered requeset deletion";
     }
 }

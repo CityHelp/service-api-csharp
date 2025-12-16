@@ -43,7 +43,7 @@ public class SystemDirectories : ISystemDirectories
             
             _logger.LogInformation("Successfully retrieved {Count} emergency sites near location", emergencySites.Count);
             
-            return ApiResponse.Ok(emergencySites, Messages.SystemDirectory.FoundDirectories);
+            return ApiResponse.Ok(Messages.SystemDirectory.FoundDirectories ,emergencySites);
         }
         catch (Exception ex)
         {

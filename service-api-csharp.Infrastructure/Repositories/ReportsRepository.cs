@@ -28,7 +28,7 @@ public class ReportsRepository : IReportsRepository
     public async Task<Report?> GetReportByIdAsync(Guid reportId, CancellationToken cancellationToken = default)
     {
         return await _context.Reports
-            .Include(r => r.Photos)
+            .Include(r => r.Photo)
             .Include(r => r.Category)
             .FirstOrDefaultAsync(r => r.Id == reportId, cancellationToken);
     }
@@ -36,16 +36,16 @@ public class ReportsRepository : IReportsRepository
     public async Task<ICollection<Report>> GetReportsWithinDistanceAsync(Point origin, double distanceInMeters, CancellationToken cancellationToken = default)
     {
         return await _context.Reports
-            .Include(r => r.Photos)
+            .Include(r => r.Photo)
             .Include(r => r.Category)
             .Where(r => EF.Functions.IsWithinDistance(r.UbicationCoordinates, origin, distanceInMeters, true))
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<ICollection<Report>> GetReportsByUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<ICollection<Report>> GetReportsByUserAsync(int userId, CancellationToken cancellationToken = default) 
     {
         return await _context.Reports
-            .Include(r => r.Photos)
+            .Include(r => r.Photo)
             .Include(r => r.Category)
             .Where(r => r.UserId == userId)
             .ToListAsync(cancellationToken);

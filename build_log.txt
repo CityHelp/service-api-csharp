@@ -1,0 +1,10 @@
+  Determinando los proyectos que se van a restaurar...
+  Todos los proyectos están actualizados para la restauración.
+  service-api-csharp.Domain -> /home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.Domain/bin/Debug/net9.0/service-api-csharp.Domain.dll
+  service-api-csharp.Application -> /home/juan-jose/Documentos/Csharp/service-api-csharp/service-api-csharp.Application/bin/Debug/net9.0/service-api-csharp.Application.dll
+
+Compilación correcta.
+    0 Advertencia(s)
+    0 Errores
+
+Tiempo transcurrido 00:00:02.84
