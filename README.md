@@ -61,7 +61,6 @@ Para más detalles, consulta la [documentación de la estructura](docs/Architect
 
 ### Base de Datos
 - **PostgreSQL** / **SQL Server** - Base de datos relacional
-- **Redis** - Caché distribuida (opcional)
 
 ### Autenticación y Seguridad
 - **JWT** - JSON Web Tokens
@@ -71,8 +70,6 @@ Para más detalles, consulta la [documentación de la estructura](docs/Architect
 - **Swagger/OpenAPI** - Documentación de API
 
 ### Testing
-- **xUnit** - Framework de pruebas
-- **Moq** - Mocking
 - **FluentAssertions** - Assertions fluidas
 
 ### DevOps

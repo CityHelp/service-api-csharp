@@ -1,13 +1,12 @@
+using FluentValidation;
 using service_api_csharp.Application.Common;
 using service_api_csharp.Application.DTOs;
 
 namespace service_api_csharp.Application.Validators;
 
-using FluentValidation;
-
-public class UbicationUserDtoValidator : AbstractValidator<UbicationUserDto>
+public class ReportsRadio3kmDtoValidator : AbstractValidator<ReportsRadio3kmDto>
 {
-    public UbicationUserDtoValidator()
+    public ReportsRadio3kmDtoValidator()
     {
         RuleFor(x => x.Latitude)
             .NotEmpty().WithMessage(Messages.Coordinates.LatitudeObligatory)

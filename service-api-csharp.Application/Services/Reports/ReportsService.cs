@@ -20,13 +20,13 @@ public class ReportsService : IReportsService
         _logger = logger;
     }
 
-    public async Task<ApiResponse> RegisterReportAsync(RegisterReportDto request, Guid userId, string? userEmail, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> RegisterReportAsync(RegisterReportDto request, int userId, CancellationToken cancellationToken = default)
     {
         try
         {
             if (!int.TryParse(request.IdCategory, out var categoryId))
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, "Invalid category id");
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.ReportsCategories.CategorNotFound);
             }
 
             if (!double.TryParse(request.Latitude, out var latitude) || !double.TryParse(request.Longitude, out var longitude))
@@ -38,7 +38,7 @@ public class ReportsService : IReportsService
 
             if (category is null)
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, "Category not found");
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.ReportsCategories.CategorNotFound);
             }
 
             var ubication = _geometryFactory.CreatePoint(new Coordinate(longitude, latitude));
@@ -49,33 +49,34 @@ public class ReportsService : IReportsService
                 Id = Guid.NewGuid(),
                 Title = request.Title,
                 Description = request.Description,
-                EmergencyLevel = request.EmergencyLevel,
+                EmergencyLevel = request.EmergencyLevel.ToUpper(),
                 UserId = userId,
                 CategoryId = categoryId,
-                DateReport = request.DateReport.ToDateTime(TimeOnly.MinValue),
+                DateReport = request.DateReport,
                 UbicationCoordinates = ubication,
+                UbicationDirection = request.DirectionReport,
+                NumDeleteReportRequest = 0,
+                DeleteRequestUserIds = null,
                 CreatedAt = DateTime.UtcNow,
-                Photos = request.ListUrlImages?.Select(url => new PhotoReport
+                Photo = !string.IsNullOrEmpty(request.ImageUrl) ? new PhotoReport
                 {
-                    PhotoUrl = url
-                }).ToList() ?? new List<PhotoReport>()
+                    PhotoUrl = request.ImageUrl
+                } : null
             };
 
             await _unitOfWork.BeginTransactionAsync();
 
-            await _unitOfWork.Reports.AddReportAsync(report, cancellationToken);
+            await _unitOfWork.Reports.AddReportAsync(report, cancellationToken);    
             await _unitOfWork.SaveAsync();
             await _unitOfWork.CommitTransactionAsync();
 
-            _logger.LogInformation("Report {ReportId} created by user {UserId} ({Email})", report.Id, userId, userEmail);
-
-            return ApiResponse.Ok(report.Id, "Report created successfully");
+            return ApiResponse.Ok(Messages.Reports.ReportRegistered);
         }
         catch (Exception ex)
         {
             await _unitOfWork.RollbackTransactionAsync();
             _logger.LogError(ex, "Error registering report for user {UserId}", userId);
-            return ApiResponse.Fail("DEBUG: " + ex.Message, ex.ToString());
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
         }
     }
 
@@ -102,19 +103,19 @@ public class ReportsService : IReportsService
                 Latitude = report.UbicationCoordinates.Y,
                 Longitude = report.UbicationCoordinates.X,
                 Category = report.Category.CategoryName,
-                Photos = report.Photos.Select(p => p.PhotoUrl).ToList()
+                PhotoUrl = report.Photo.PhotoUrl
             });
 
-            return ApiResponse.Ok(response);
+            return ApiResponse.Ok(Messages.Reports.ReportsFound, response);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving reports within 3km");
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
         }
     }
 
-    public async Task<ApiResponse> UpdateReportAsync(UpdateReportDto request, Guid userId, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> UpdateReportAsync(UpdateReportDto request, int userId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -122,32 +123,31 @@ public class ReportsService : IReportsService
 
             if (report is null)
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, "Report not found");
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.Reports.ReportNotFound);
             }
 
             if (report.UserId != userId)
             {
-                return ApiResponse.Fail(Messages.Errors.Unauthorized, "User not allowed to update this report");
+                return ApiResponse.Fail(Messages.Errors.Unauthorized);
             }
 
             report.Title = request.Title;
             report.Description = request.Description;
-            report.EmergencyLevel = request.EmergencyLevel;
             report.UpdatedAt = DateTime.UtcNow;
 
             _unitOfWork.Reports.UpdateReport(report);
             await _unitOfWork.SaveAsync();
 
-            return ApiResponse.Ok(report.Id, "Report updated successfully");
+            return ApiResponse.Ok(Messages.Reports.ReportUpdated);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating report {ReportId}", request.ReportId);
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
         }
     }
 
-    public async Task<ApiResponse> RequestDeleteReportAsync(DeleteReportDto request, Guid userId, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> RequestDeleteReportAsync(DeleteReportDto request, int userId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -155,12 +155,12 @@ public class ReportsService : IReportsService
 
             if (report is null)
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, "Report not found");
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.Reports.ReportNotFound);
             }
 
             if (report.DeleteRequestUserIds.Contains(userId))
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, "User already requested deletion");
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.Reports.AlreadyRequestDeletion);
             }
 
             report.DeleteRequestUserIds.Add(userId);
@@ -178,17 +178,17 @@ public class ReportsService : IReportsService
             await _unitOfWork.SaveAsync();
 
             return report.NumDeleteReportRequest >= 3
-                ? ApiResponse.Ok(report.Id, "Report deleted after multiple requests")
-                : ApiResponse.Ok(report.NumDeleteReportRequest, "Delete request registered");
+                ? ApiResponse.Ok(Messages.Reports.ReportDeleted)
+                : ApiResponse.Ok(Messages.Reports.RegisteredRequestDeletion);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing delete request for report {ReportId}", request.ReportId);
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
         }
     }
 
-    public async Task<ApiResponse> DeleteReportDirectlyAsync(Guid reportId, Guid userId, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> DeleteReportDirectlyAsync(Guid reportId, int userId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -196,32 +196,33 @@ public class ReportsService : IReportsService
 
             if (report is null)
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, "Report not found");
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.Reports.ReportNotFound);
             }
 
             if (report.UserId != userId)
             {
-                return ApiResponse.Fail(Messages.Errors.Unauthorized, "User not allowed to delete this report");
+                return ApiResponse.Fail(Messages.Errors.Unauthorized);
             }
 
             _unitOfWork.Reports.RemoveReport(report);
             await _unitOfWork.SaveAsync();
 
-            return ApiResponse.Ok(reportId, "Report deleted successfully");
+            return ApiResponse.Ok(Messages.Reports.ReportDeleted);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting report {ReportId}", reportId);
-            return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
         }
     }
+    
 
-    public async Task<ApiResponse> GetReportsByUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<ApiResponse> GetReportsByUserAsync(int userId, CancellationToken cancellationToken = default)
     {
         try
         {
             var reports = await _unitOfWork.Reports.GetReportsByUserAsync(userId, cancellationToken);
-
+            // Timezone logic removed as per requirement for timestamp without time zone
             var response = reports.Select(report => new RegisterReportDto
             {
                 Title = report.Title,
@@ -229,15 +230,14 @@ public class ReportsService : IReportsService
                 Category = report.Category.CategoryName,
                 IdCategory = report.CategoryId.ToString(),
                 EmergencyLevel = report.EmergencyLevel,
-                DateReport = DateOnly.FromDateTime(report.DateReport),
-                DocumentUser = string.Empty,
+                DateReport = report.DateReport,
                 Latitude = report.UbicationCoordinates.Y.ToString(),
                 Longitude = report.UbicationCoordinates.X.ToString(),
-                DirectionReports = string.Empty,
-                ListUrlImages = report.Photos.Select(p => p.PhotoUrl).ToList()
+                DirectionReport = report.UbicationDirection,
+                ImageUrl = report.Photo?.PhotoUrl
             }).ToList();
 
-            return ApiResponse.Ok(response);
+            return ApiResponse.Ok(null, response);
         }
         catch (Exception ex)
         {

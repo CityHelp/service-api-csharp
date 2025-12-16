@@ -11,17 +11,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users");
 
         builder.HasKey(u => u.Id);
-        builder.Property(u => u.Id)
-            .HasColumnName("id")
-            .HasDefaultValueSql("gen_random_uuid()");
 
-        builder.Property(u => u.Identification)
-            .IsRequired()
-            .HasMaxLength(200)
-            .HasColumnName("identification");
-        
-        builder.HasIndex(u => u.Identification)
-            .IsUnique();
+        builder.Property(u => u.Id)
+            .HasColumnName("id");
+
+        builder.Property(u => u.uuid)
+            .HasColumnName("uuid")
+            .HasDefaultValueSql("gen_random_uuid()");
 
         builder.Property(u => u.FirstName)
             .IsRequired()
@@ -44,13 +40,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Password)
             .HasColumnType("text")
             .HasColumnName("password");
-
-        builder.Property(u => u.GoogleId)
-            .HasMaxLength(500)
-            .HasColumnName("google_id");
-            
-        builder.HasIndex(u => u.GoogleId)
-            .IsUnique();
+        
 
         builder.Property(u => u.IsVerified)
             .IsRequired()
@@ -70,10 +60,23 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatedAt)
             .IsRequired()
             .HasDefaultValueSql("NOW()")
-            .HasColumnName("created_at");
+            .HasColumnName("created_at")
+            .HasColumnType("timestamp without time zone");
 
         builder.Property(u => u.UpdatedAt)
             .HasDefaultValueSql("NOW()")
-            .HasColumnName("updated_at");
+            .HasColumnName("updated_at")
+            .HasColumnType("timestamp without time zone");
+        
+        builder.Property(u => u.LastLoginAt)
+            .HasColumnName("last_login_at")
+            .HasColumnType("timestamp without time zone");
+        
+        builder.Property(u => u.LastFailedLoginAttempt)
+            .HasColumnName("last_failed_login_at")
+            .HasColumnType("timestamp without time zone");
+        
+        builder.Property(u => u.FailedLoginAttemps)
+            .HasColumnName("failed_login_attempts");
     }
 }

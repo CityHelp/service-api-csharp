@@ -1,4 +1,3 @@
-using service_api_csharp.Domain.ValueObjects;
 using NetTopologySuite.Geometries;
 
 namespace service_api_csharp.Domain.Entities;
