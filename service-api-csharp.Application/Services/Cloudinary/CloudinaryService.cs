@@ -12,7 +12,7 @@ public class CloudinaryService : ICloudinaryService
     private readonly ICloudinaryUpload _cloudinaryUpload;
     private readonly ILogger<CloudinaryService> _logger;
 
-    // Configuración de validaciones
+    // File validation configuration
     private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp" };
     private const long MaxFileSize = 10 * 1024 * 1024; // 10MB
 
@@ -26,7 +26,7 @@ public class CloudinaryService : ICloudinaryService
 
     public async Task<ApiResponse> UploadImageAsync(IFormFile file)
     {
-        // Validar que se haya enviado un archivo
+        // Validate that a file has been sent
         var validationResult = ValidateFile(file);
         if (!validationResult.Success)
         {
@@ -41,55 +41,55 @@ public class CloudinaryService : ICloudinaryService
 
         try
         {
-            // Subir el archivo a Cloudinary
+            // Upload the file to Cloudinary
             var imageUrl = await _cloudinaryUpload.UploadFile(file);
 
             if (string.IsNullOrEmpty(imageUrl))
             {
-                _logger.LogError("Error al subir el archivo a Cloudinary");
+                _logger.LogError("Error uploading file to Cloudinary");
                 return ApiResponse.Fail(Messages.Errors.UnexpectedError);
             }
 
-            _logger.LogInformation("Imagen subida exitosamente: {Url}", imageUrl);
+            _logger.LogInformation("Image uploaded successfully: {Url}", imageUrl);
 
-            return ApiResponse.Ok(Messages.Clodinary.ImageUploadSucesfully,  imageUrl);
+            return ApiResponse.Ok(Messages.Cloudinary.ImageUploadSuccessfully,  imageUrl);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error inesperado al procesar la subida de imagen");
+            _logger.LogError(ex, "Unexpected error occurred while processing image upload");
             return ApiResponse.Fail(Messages.Errors.UnexpectedError);
         }
     }
 
-    private  ValidateFileCloudinaryPOCO ValidateFile(IFormFile file)
+    private ValidateFileCloudinaryPOCO ValidateFile(IFormFile file)
     {
-        // Validar que el archivo no sea nulo o vacío
+        // Validate that the file is not null or empty
         if (file == null || file.Length == 0)
         {
-            return ValidateFileCloudinaryPOCO.Fail(Messages.Clodinary.NoFileProvided);
+            return ValidateFileCloudinaryPOCO.Fail(Messages.Cloudinary.NoFileProvided);
         }
 
-        // Validar extensión del archivo
+        // Validate file extension
         var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
         if (!AllowedExtensions.Contains(fileExtension))
         {
-            _logger.LogWarning("Tipo de archivo no permitido: {Extension}", fileExtension);
+            _logger.LogWarning("File type not allowed: {Extension}", fileExtension);
 
             return ValidateFileCloudinaryPOCO.Fail(
-                Messages.Clodinary.TypeFileNotAllowed, fileExtension,
-                $"Tipo de archivo no permitido. Solo se aceptan: {string.Join(", ", AllowedExtensions)}"
+                Messages.Cloudinary.FileTypeNotAllowed, fileExtension,
+                $"File type not allowed. Only the following formats are accepted: {string.Join(", ", AllowedExtensions)}"
             );
         }
 
-        // Validar tamaño del archivo
+        // Validate file size
         if (file.Length > MaxFileSize)
         {
-            _logger.LogWarning("Archivo demasiado grande: {Size} bytes", file.Length);
+            _logger.LogWarning("File size too large: {Size} bytes", file.Length);
             return ValidateFileCloudinaryPOCO.Fail(
-                Messages.Clodinary.FileTooBig);
+                Messages.Cloudinary.FileTooBig);
         }
 
-        // Todas las validaciones pasaron
+        // All validations passed
         return ValidateFileCloudinaryPOCO.Ok(true);
     }
 }

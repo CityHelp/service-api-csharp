@@ -10,14 +10,14 @@ public class UbicationUserDtoValidator : AbstractValidator<UbicationUserDto>
     public UbicationUserDtoValidator()
     {
         RuleFor(x => x.Latitude)
-            .NotEmpty().WithMessage(Messages.Coordinates.LatitudeObligatory)
-            .Must(BeAValidDouble).WithMessage(Messages.Coordinates.LatitudeBeANumber)
-            .Must(BeValidLatitude).WithMessage(Messages.Coordinates.LatitudeBeAValidNumber);
+            .NotEmpty().WithMessage(Messages.Coordinates.LatitudeRequired)
+            .Must(BeAValidDouble).WithMessage(Messages.Coordinates.LatitudeIsANumber)
+            .Must(BeValidLatitude).WithMessage(Messages.Coordinates.LatitudeIsAValidNumber);
 
         RuleFor(x => x.Longitude)
-            .NotEmpty().WithMessage(Messages.Coordinates.LongitudeObligatory)
-            .Must(BeAValidDouble).WithMessage(Messages.Coordinates.LongitudeBeANumber)
-            .Must(BeValidLongitude).WithMessage(Messages.Coordinates.LongitudeBeAValidNumber);
+            .NotEmpty().WithMessage(Messages.Coordinates.LongitudeRequired)
+            .Must(BeAValidDouble).WithMessage(Messages.Coordinates.LongitudeIsANumber)
+            .Must(BeValidLongitude).WithMessage(Messages.Coordinates.LongitudeIsAValidNumber);
     }
 
     private bool BeAValidDouble(string value)

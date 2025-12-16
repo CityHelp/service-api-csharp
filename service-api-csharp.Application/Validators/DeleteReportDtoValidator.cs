@@ -8,6 +8,6 @@ public class DeleteReportDtoValidator : AbstractValidator<DeleteReportDto>
     public DeleteReportDtoValidator()
     {
         RuleFor(x => x.ReportId)
-            .NotEmpty().WithMessage("El ID del reporte es obligatorio.");
+            .NotEmpty().WithMessage("Report ID is required.");
     }
 }

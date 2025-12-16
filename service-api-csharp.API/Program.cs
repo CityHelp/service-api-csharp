@@ -12,12 +12,23 @@ var builder = WebApplication.CreateBuilder();
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
 builder.Configuration.AddEnvironmentVariables();
 
-//generic things
+// Register generic services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
  
- 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendOnly", policy =>
+    {
+        policy
+            .WithOrigins("https://cityhelp.crudzaso.com")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -42,15 +53,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("FrontendOnly");
 
-// Healthcheck
+// Health check endpoint
 app.MapMethods("/health", new[] { "HEAD" }, () => Results.Ok());
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapear los controllers
+// Map all controllers
 app.MapControllers();
 
 app.Run();

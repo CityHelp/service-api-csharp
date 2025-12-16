@@ -26,7 +26,7 @@ public class ReportsService : IReportsService
         {
             if (!int.TryParse(request.IdCategory, out var categoryId))
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.ReportsCategories.CategorNotFound);
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.ReportsCategories.CategoryNotFound);
             }
 
             if (!double.TryParse(request.Latitude, out var latitude) || !double.TryParse(request.Longitude, out var longitude))
@@ -38,7 +38,7 @@ public class ReportsService : IReportsService
 
             if (category is null)
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.ReportsCategories.CategorNotFound);
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.ReportsCategories.CategoryNotFound);
             }
 
             var ubication = _geometryFactory.CreatePoint(new Coordinate(longitude, latitude));
@@ -160,7 +160,7 @@ public class ReportsService : IReportsService
 
             if (report.DeleteRequestUserIds.Contains(userId))
             {
-                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.Reports.AlreadyRequestDeletion);
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.Reports.AlreadyRequestedDeletion);
             }
 
             report.DeleteRequestUserIds.Add(userId);
@@ -179,7 +179,7 @@ public class ReportsService : IReportsService
 
             return report.NumDeleteReportRequest >= 3
                 ? ApiResponse.Ok(Messages.Reports.ReportDeleted)
-                : ApiResponse.Ok(Messages.Reports.RegisteredRequestDeletion);
+                : ApiResponse.Ok(Messages.Reports.RegisteredDeleteRequest);
         }
         catch (Exception ex)
         {
