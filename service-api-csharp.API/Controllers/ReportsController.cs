@@ -193,6 +193,24 @@ public class ReportsController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("{reportId}")]
+    public async Task<IActionResult> GetReportById(Guid reportId)
+    {
+        var response = await _reportsService.GetReportByIdAsync(reportId);
+        
+        if (!response.Success)
+        {
+            if (response.Message == Messages.Errors.UnexpectedError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+            
+            return NotFound(response);
+        }
+        
+        return Ok(response);
+    }
+
     private int? GetUserIdentity()
     {
         var claim = User.FindFirst("userId")?.Value;
