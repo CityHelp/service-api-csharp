@@ -251,23 +251,7 @@ dotnet build
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 👥 Autores
-
-- **Tu Nombre** - *Desarrollo inicial* - [tu-usuario](https://github.com/tu-usuario)
-
-## 🙏 Agradecimientos
-
-- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) por Robert C. Martin
-- [CQRS Pattern](https://martinfowler.com/bliki/CQRS.html) por Martin Fowler
-- [Domain-Driven Design](https://www.domainlanguage.com/ddd/) por Eric Evans
-
-## 📞 Contacto
-
-- Email: tu-email@ejemplo.com
 - LinkedIn: [tu-perfil](https://linkedin.com/in/tu-perfil)
 - GitHub: [@tu-usuario](https://github.com/tu-usuario)
 
