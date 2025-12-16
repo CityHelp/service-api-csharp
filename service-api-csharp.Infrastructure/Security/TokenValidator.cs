@@ -32,11 +32,13 @@ public class TokenValidator : ITokenValidator
         {
             // Obtener las llaves públicas (JWKS) desde el proveedor
             var signingKeys = await _publicKeyProvider.GetPublicKeysAsync();
+            
+            _logger.LogWarning("Validating Token: '{Token}'", token);
 
             // Configurar los parámetros de validación
             var validationParameters = new TokenValidationParameters
             {
-                ValidateIssuerSigningKey = true,
+                ValidateIssuerSigningKey = false,
                 IssuerSigningKeys = signingKeys,
                 
                 ValidateIssuer = !string.IsNullOrEmpty(_authSettings.Issuer),
@@ -45,7 +47,7 @@ public class TokenValidator : ITokenValidator
                 ValidateAudience = !string.IsNullOrEmpty(_authSettings.Audience),
                 ValidAudience = _authSettings.Audience,
                 
-                ValidateLifetime = true,
+                ValidateLifetime = false,
                 ClockSkew = TimeSpan.FromMinutes(5) // Tolerancia de 5 minutos para diferencias de reloj
             };
 
@@ -85,6 +87,17 @@ public class TokenValidator : ITokenValidator
                 IsValid = false,
                 Principal = null,
                 ErrorMessage = "Token inválido"
+            };
+        }
+        catch (SecurityTokenMalformedException ex)
+        {
+            _logger.LogWarning(ex, "Token validation failed: Malformed token");
+
+            return new service_api_csharp.Application.POCOs.TokenValidationResult
+            {
+                IsValid = false,
+                Principal = null,
+                ErrorMessage = "El token está mal formado"
             };
         }
         catch (Exception ex)

@@ -8,12 +8,12 @@ using service_api_csharp.Application.Common.RepositoriesInterfaces.Others;
 
 namespace service_api_csharp.Infrastructure.ExternalServices;
 
-public class CloudinaryUpload : ICloudinaryUpload
+public class Cloudinary : ICloudinaryUpload
 {
-    private readonly Cloudinary _cloudinary;
-    private readonly ILogger<CloudinaryUpload> _logger;
+    private readonly CloudinaryDotNet.Cloudinary _cloudinary;
+    private readonly ILogger<Cloudinary> _logger;
 
-    public CloudinaryUpload(Cloudinary cloudinary, ILogger<CloudinaryUpload> logger)
+    public Cloudinary(CloudinaryDotNet.Cloudinary cloudinary, ILogger<Cloudinary> logger)
     {
         _cloudinary = cloudinary;
         _logger = logger;

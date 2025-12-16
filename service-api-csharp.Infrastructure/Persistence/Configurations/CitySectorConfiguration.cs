@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using service_api_csharp.Domain.Entities;
-using service_api_csharp.Domain.ValueObjects;
-using System.Linq;
 
 namespace service_api_csharp.Infrastructure.Persistence.Configurations;
 

@@ -73,10 +73,11 @@ public static class DependencyInjection
         {
              client.BaseAddress = new Uri(url);
         });
+        
+        services.Configure<AuthSettings>(configuration.GetSection("Auth"));
         #endregion
         
         //Configuration Java
-        services.Configure<AuthSettings>(configuration.GetSection("Auth"));
         
         //Configuration cloudinary
         // 1. Cargar las configuraciones de Cloudinary
@@ -104,7 +105,7 @@ public static class DependencyInjection
         services.AddScoped<ISystemDirectoriesRepository, SystemDirectoriesRepository>();
         services.AddScoped<IReportsRepository, ReportsRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<ICloudinaryUpload, CloudinaryUpload>();
+        services.AddScoped<ICloudinaryUpload, Cloudinary>();
         services.AddScoped<service_api_csharp.Application.Services.Cloudinary.ICloudinaryService, service_api_csharp.Application.Services.Cloudinary.CloudinaryService>();
         services.AddSingleton(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
         

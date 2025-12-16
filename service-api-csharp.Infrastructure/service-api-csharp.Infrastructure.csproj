@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\service-api-csharp.Application\service-api-csharp.Application.csproj" />
     <ProjectReference Include="..\service-api-csharp.Domain\service-api-csharp.Domain.csproj" />
   </ItemGroup>

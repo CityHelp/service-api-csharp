@@ -26,11 +26,13 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             
         builder.Property(e => e.ExpiresAt)
             .IsRequired()
-            .HasColumnName("expires_at");
+            .HasColumnName("expires_at")
+            .HasColumnType("timestamp without time zone");
 
         builder.Property(e => e.CreatedAt)
             .IsRequired()
-            .HasColumnName("created_at");
+            .HasColumnName("created_at")
+            .HasColumnType("timestamp without time zone");
 
         builder.Property(e => e.IsRevoked)
             .IsRequired()
