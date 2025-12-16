@@ -18,7 +18,7 @@ public class CloudinaryController : ControllerBase
     }
 
     [HttpPost("upload")]
-    [Consumes("multipart/form-data")]
+        [Consumes("multipart/form-data")]
     public async Task<IActionResult> UploadImage([FromForm] UploadImageRequest file)
     {
         var result = await _cloudinaryService.UploadImageAsync(file.File);
