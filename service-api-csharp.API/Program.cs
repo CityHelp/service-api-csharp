@@ -17,7 +17,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
  
- 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendOnly", policy =>
+    {
+        policy
+            .WithOrigins("https://cityhelp.crudzaso.com")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -42,6 +53,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("FrontendOnly");
 
 // Health check endpoint
 app.MapMethods("/health", new[] { "HEAD" }, () => Results.Ok());
