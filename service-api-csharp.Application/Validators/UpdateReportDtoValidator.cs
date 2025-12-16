@@ -8,13 +8,13 @@ public class UpdateReportDtoValidator : AbstractValidator<UpdateReportDto>
     public UpdateReportDtoValidator()
     {
         RuleFor(x => x.ReportId)
-            .NotEmpty().WithMessage("El ID del reporte es obligatorio.");
+            .NotEmpty().WithMessage("Report ID is required.");
 
         RuleFor(x => x.Title)
-            .NotEmpty().WithMessage("El título es obligatorio.")
-            .MaximumLength(200).WithMessage("El título no puede exceder los 200 caracteres.");
+            .NotEmpty().WithMessage("Title is required.")
+            .MaximumLength(200).WithMessage("Title cannot exceed 200 characters.");
 
         RuleFor(x => x.Description)
-            .NotEmpty().WithMessage("La descripción es obligatoria.");
+            .NotEmpty().WithMessage("Description is required.");
     }
 }

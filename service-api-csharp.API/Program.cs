@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder();
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
 builder.Configuration.AddEnvironmentVariables();
 
-//generic things
+// Register generic services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -43,14 +43,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Healthcheck
+// Health check endpoint
 app.MapMethods("/health", new[] { "HEAD" }, () => Results.Ok());
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapear los controllers
+// Map all controllers
 app.MapControllers();
 
 app.Run();

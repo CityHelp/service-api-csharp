@@ -8,22 +8,22 @@ public class EmergencySiteDtoValidator : AbstractValidator<EmergencySiteDto>
     public EmergencySiteDtoValidator()
     {
         RuleFor(x => x.NameSite)
-            .NotEmpty().WithMessage("El nombre del sitio es obligatorio.")
-            .MaximumLength(200).WithMessage("El nombre del sitio no puede exceder los 200 caracteres.");
+            .NotEmpty().WithMessage("Site name is required.")
+            .MaximumLength(200).WithMessage("Site name cannot exceed 200 characters.");
 
         RuleFor(x => x.Phone)
-            .NotEmpty().WithMessage("El teléfono es obligatorio.")
-            .MaximumLength(200).WithMessage("El teléfono no puede exceder los 200 caracteres.");
+            .NotEmpty().WithMessage("Phone number is required.")
+            .MaximumLength(200).WithMessage("Phone number cannot exceed 200 characters.");
 
         RuleFor(x => x.Address)
-            .NotEmpty().WithMessage("La dirección de ubicación es obligatoria.")
-            .MaximumLength(200).WithMessage("La dirección no puede exceder los 200 caracteres.");
+            .NotEmpty().WithMessage("Address is required.")
+            .MaximumLength(200).WithMessage("Address cannot exceed 200 characters.");
 
         RuleFor(x => x.Description)
-            .NotEmpty().WithMessage("La descripción es obligatoria.")
-            .MaximumLength(500).WithMessage("La descripción no puede exceder los 500 caracteres.");
+            .NotEmpty().WithMessage("Description is required.")
+            .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");
 
         RuleFor(x => x.Description)
-            .NotEmpty().WithMessage("La categoria es obligatoria.");
+            .NotEmpty().WithMessage("Category is required.");
     }
 }

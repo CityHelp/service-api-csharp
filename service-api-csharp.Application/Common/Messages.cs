@@ -4,40 +4,40 @@ namespace service_api_csharp.Application.Common;
 
 public static class Messages
 { 
-    public static class Clodinary
+    public static class Cloudinary
     {
-        public const string ImageUploadSucesfully = "Image uploaded successfully";
+        public const string ImageUploadSuccessfully = "Image uploaded successfully";
         public const string NoFileProvided = "No file provided";
-        public const string TypeFileNotAllowed = "File type not allowed";
+        public const string FileTypeNotAllowed = "File type not allowed";
         public const string FileTooBig = "File too large";
     }
 
     public static class Coordinates
     {
-        public const string LatitudeObligatory = "Latitude is obligatory";
-        public const string LongitudeObligatory = "Longitude is obligatory";
-        public const string LatitudeBeANumber = "Latitude must be a valid number";
-        public const string LongitudeBeANumber = "Longitude must be a valid number";
-        public const string LatitudeBeAValidNumber = "Latitude must be between -90 and 90";
-        public const string LongitudeBeAValidNumber = "Longitude must be between -180 and 180";
+        public const string LatitudeRequired = "Latitude is required";
+        public const string LongitudeRequired = "Longitude is required";
+        public const string LatitudeIsANumber = "Latitude must be a valid number";
+        public const string LongitudeIsANumber = "Longitude must be a valid number";
+        public const string LatitudeIsAValidNumber = "Latitude must be between -90 and 90";
+        public const string LongitudeIsAValidNumber = "Longitude must be between -180 and 180";
         public const string GeneralInvalidCoordinates = "Invalid coordinates";
     }
 
     public static class Errors
     {
         public const string GenericField = "Invalid fields";
-        public const string UnexpectedError = "An unexpected error occured";
+        public const string UnexpectedError = "An unexpected error occurred";
         public const string Unauthorized = "Unauthorized";
     }
 
     public static class SystemDirectory
     {
-        public const string FoundDirectories = "Directories near of the person";
+        public const string FoundDirectories = "Emergency sites near the location";
     }
 
     public static class ReportsCategories
     {
-        public const string CategorNotFound = "Category not found";
+        public const string CategoryNotFound = "Category not found";
     }
 
     public static class Reports
@@ -47,7 +47,7 @@ public static class Messages
         public const string ReportDeleted = "Report deleted successfully";
         public const string ReportUpdated = "Report updated successfully";
         public const string ReportNotFound = "Report not found";
-        public const string AlreadyRequestDeletion = "User already request deletion";
-        public const string RegisteredRequestDeletion = "Registered requeset deletion";
+        public const string AlreadyRequestedDeletion = "User already requested deletion";
+        public const string RegisteredDeleteRequest = "Deletion request registered successfully";
     }
 }

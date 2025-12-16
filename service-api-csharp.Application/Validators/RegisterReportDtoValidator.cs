@@ -9,32 +9,32 @@ public class RegisterReportDtoValidator : AbstractValidator<RegisterReportDto>
     public RegisterReportDtoValidator()
     {
         RuleFor(x => x.Title)
-            .NotEmpty().WithMessage("El título es obligatorio.")
-            .MaximumLength(200).WithMessage("El título no puede exceder los 200 caracteres.");
+            .NotEmpty().WithMessage("Title is required.")
+            .MaximumLength(200).WithMessage("Title cannot exceed 200 characters.");
 
         RuleFor(x => x.Description)
-            .NotEmpty().WithMessage("La descripción es obligatoria.");
+            .NotEmpty().WithMessage("Description is required.");
 
         RuleFor(x => x.IdCategory)
-            .NotEmpty().WithMessage("La categoría es obligatoria.")
-            .Must(BeValidInt).WithMessage("El ID de la categoría debe ser un número válido.");
+            .NotEmpty().WithMessage("Category is required.")
+            .Must(BeValidInt).WithMessage("Category ID must be a valid number.");
 
         RuleFor(x => x.EmergencyLevel)
-            .NotEmpty().WithMessage("El nivel de emergencia es obligatorio.")
-            .Matches("^(baja|media|alta|critica)$").WithMessage("El nivel de emergencia debe ser: baja, media, alta o critica.");
+            .NotEmpty().WithMessage("Emergency level is required.")
+            .Matches("^(low|medium|high|critical)$").WithMessage("Emergency level must be: low, medium, high, or critical.");
 
         RuleFor(x => x.DateReport)
-            .NotEmpty().WithMessage("La fecha del reporte es obligatoria.");
+            .NotEmpty().WithMessage("Report date is required.");
 
         RuleFor(x => x.Latitude)
-            .NotEmpty().WithMessage(Messages.Coordinates.LatitudeObligatory)
-            .Must(BeAValidDouble).WithMessage(Messages.Coordinates.LatitudeBeANumber)
-            .Must(BeValidLatitude).WithMessage(Messages.Coordinates.LatitudeBeAValidNumber);
+            .NotEmpty().WithMessage(Messages.Coordinates.LatitudeRequired)
+            .Must(BeAValidDouble).WithMessage(Messages.Coordinates.LatitudeIsANumber)
+            .Must(BeValidLatitude).WithMessage(Messages.Coordinates.LatitudeIsAValidNumber);
 
         RuleFor(x => x.Longitude)
-            .NotEmpty().WithMessage(Messages.Coordinates.LongitudeObligatory)
-            .Must(BeAValidDouble).WithMessage(Messages.Coordinates.LongitudeBeANumber)
-            .Must(BeValidLongitude).WithMessage(Messages.Coordinates.LongitudeBeAValidNumber);
+            .NotEmpty().WithMessage(Messages.Coordinates.LongitudeRequired)
+            .Must(BeAValidDouble).WithMessage(Messages.Coordinates.LongitudeIsANumber)
+            .Must(BeValidLongitude).WithMessage(Messages.Coordinates.LongitudeIsAValidNumber);
     }
 
     private bool BeValidInt(string value)
