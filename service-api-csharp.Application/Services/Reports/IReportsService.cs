@@ -11,4 +11,5 @@ public interface IReportsService
     Task<ApiResponse> RequestDeleteReportAsync(DeleteReportDto request, int userId, CancellationToken cancellationToken = default);
     Task<ApiResponse> DeleteReportDirectlyAsync(Guid reportId, int userId, CancellationToken cancellationToken = default);
     Task<ApiResponse> GetReportsByUserAsync(int userId, CancellationToken cancellationToken = default);
+    Task<ApiResponse> GetReportByIdAsync(Guid reportId, CancellationToken cancellationToken = default);
 }

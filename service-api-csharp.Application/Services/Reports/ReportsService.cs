@@ -245,4 +245,37 @@ public class ReportsService : IReportsService
             return ApiResponse.Fail(Messages.Errors.UnexpectedError, ex.Message + " " + ex.InnerException?.Message);
         }
     }
+    public async Task<ApiResponse> GetReportByIdAsync(Guid reportId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var report = await _unitOfWork.Reports.GetReportByIdAsync(reportId, cancellationToken);
+            
+            if (report is null)
+            {
+                return ApiResponse.Fail(Messages.Errors.GenericField, Messages.Reports.ReportNotFound);
+            }
+
+            var response = new RegisterReportDto
+            {
+                Title = report.Title,
+                Description = report.Description,
+                Category = report.Category.CategoryName,
+                IdCategory = report.CategoryId.ToString(),
+                EmergencyLevel = report.EmergencyLevel,
+                DateReport = report.DateReport,
+                Latitude = report.UbicationCoordinates.Y.ToString(),
+                Longitude = report.UbicationCoordinates.X.ToString(),
+                DirectionReport = report.UbicationDirection,
+                ImageUrl = report.Photo?.PhotoUrl
+            };
+
+            return ApiResponse.Ok(null, response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving report {ReportId}", reportId);
+            return ApiResponse.Fail(Messages.Errors.UnexpectedError);
+        }
+    }
 }

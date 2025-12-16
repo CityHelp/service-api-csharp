@@ -1,260 +1,142 @@
 # Service API - Clean Architecture
 
-[![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
-[![C#](https://img.shields.io/badge/C%23-12.0-blue)](https://docs.microsoft.com/en-us/dotnet/csharp/)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-API REST construida con .NET 8 siguiendo los principios de Clean Architecture, CQRS y Domain-Driven Design (DDD).
-Haciendo pruebas para ver si funciona en Actions...
+A robust REST API built with **.NET 9**, designed following **Clean Architecture**, **CQRS**, and **Domain-Driven Design (DDD)** principles. This service acts as a core component in a distributed system, handling business logic with high meaningfulness and maintainability.
 
-## 🏗️ Arquitectura
+## 🏗️ Architecture
 
-Este proyecto implementa **Clean Architecture** con las siguientes capas:
+This project strictly enforces **Clean Architecture**, ensuring a clear separation of concerns, testability, and independence from external frameworks/drivers.
 
-```
-┌─────────────────────────────────────────┐
-│            API Layer                    │  ← Presentación (Controllers, Middleware)
-├─────────────────────────────────────────┤
-│        Application Layer                │  ← Casos de Uso (CQRS, Handlers)
-├─────────────────────────────────────────┤
-│         Domain Layer                    │  ← Lógica de Negocio (Entities, Rules)
-├─────────────────────────────────────────┤
-│      Infrastructure Layer               │  ← Implementaciones (DB, Services)
-└─────────────────────────────────────────┘
-```
-Testeando cambios para ver si funciona
-### Principios Aplicados
+### Layers Overview
 
-- ✅ **Clean Architecture**: Separación de responsabilidades en capas
-- ✅ **CQRS**: Separación de comandos y consultas
-- ✅ **DDD**: Domain-Driven Design con entidades ricas
-- ✅ **SOLID**: Principios de diseño orientado a objetos
-- ✅ **Repository Pattern**: Abstracción del acceso a datos
-- ✅ **Unit of Work**: Gestión de transacciones
-- ✅ **Dependency Injection**: Inversión de dependencias
 
-## 📁 Estructura del Proyecto
 
-```
-service-api-csharp/
-├── service-api-csharp.Domain/          # Entidades, Value Objects, Interfaces
-├── service-api-csharp.Application/     # Casos de Uso, DTOs, Validators
-├── service-api-csharp.Infrastructure/  # EF Core, Repositories, Services
-├── service-api-csharp.API/             # Controllers, Middleware, Filters
-├── tests/                              # Pruebas (Unit, Integration, E2E)
-├── docs/                               # Documentación
-├── docker/                             # Configuración Docker
-└── scripts/                            # Scripts de utilidad
-```
+1.  **Domain Layer**: The heart of the software. Contains Enterprise Logic, Entities, Enums, and Value Objects. It has **no dependencies** on other layers.
+2.  **Application Layer**: Contains Application Logic. It defines Use Cases (Commands/Queries), DTOs, interfaces for repositories, and validators. It depends only on the Domain.
+3.  **Infrastructure Layer**: Implements interfaces defined in Application. Handles Database access (EF Core), external API calls, File Systems, etc.
+4.  **API Layer**: The entry point. Handles HTTP requests, configuration, and middleware.
 
-Para más detalles, consulta la [documentación de la estructura](docs/Architecture/PROJECT_STRUCTURE.md).
+### Key Patterns
+*   **CQRS (Command Query Responsibility Segregation)**: Using `MediatR` to separate read and write operations.
+*   **Repository Pattern**: Abstracting data access.
+*   **Unit of Work**: Managing database transactions.
+*   **Result Pattern**: Handling operation outcomes without exceptions for control flow.
 
-## 🚀 Tecnologías
+---
 
-### Backend
-- **.NET 8** - Framework principal
-- **ASP.NET Core** - Web API
-- **Entity Framework Core** - ORM
-- **MediatR** - Patrón Mediator para CQRS
-- **AutoMapper** - Mapeo de objetos
-- **FluentValidation** - Validación de datos
+## � Authentication & Security
 
-### Base de Datos
-- **PostgreSQL** / **SQL Server** - Base de datos relacional
+This service utilizes a centralized authentication mechanism involving a separate Java Microservice for key management.
 
-### Autenticación y Seguridad
-- **JWT** - JSON Web Tokens
-- **ASP.NET Core Identity** - Gestión de usuarios
+### How it Works
 
-### Documentación
-- **Swagger/OpenAPI** - Documentación de API
+The API implements a custom **JWT (JSON Web Token)** authentication flow with dynamic public key retrieval.
 
-### Testing
-- **FluentAssertions** - Assertions fluidas
+1.  **JWT Verification**: The API expects a Bearer token in the `Authorization` header.
+2.  **Public Key Retrieval (`JavaPublicKeyProvider`)**:
+    *   The service does not store static public keys.
+    *   It fetches the **JSON Web Key Set (JWKS)** from an external **Java Microservice**.
+    *   **Caching**: To optimize performance and reduce network chatter, the fetched keys are cached in-memory (`IMemoryCache`) for **30 minutes**.
+    *   If the cache is empty or expired, it re-fetches the keys automatically.
+3.  **Token Validation (`CustomJwtHandler` & `TokenValidator`)**:
+    *   The token's signature is verified against the retrieved Public Key.
+    *   **Issuer** and **Audience** (if configured) are validated.
+    *   Token expiration is checked.
+4.  **Clean Architecture Integration**:
+    *   Interfaces (`IJavaPublicKeyProvider`) are defined in the **Application Layer**.
+    *   Implementation details (`HttpClient` calls, caching) reside in the **Infrastructure Layer**.
 
-### DevOps
-- **Docker** - Contenedorización
-- **GitHub Actions** - CI/CD
+---
 
-## 📋 Requisitos Previos
+## � Docker and Deployment
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [PostgreSQL](https://www.postgresql.org/download/) o [SQL Server](https://www.microsoft.com/sql-server/sql-server-downloads)
-- [Docker](https://www.docker.com/get-started) (opcional)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) o [VS Code](https://code.visualstudio.com/)
+The project is fully containerized using **Docker**, utilizing a multi-stage build process to ensure small, secure, and optimized production images.
 
-## 🛠️ Instalación y Configuración
+### Dockerfile Strategy
 
-### 1. Clonar el repositorio
+The `Dockerfile` is optimized for caching and security:
+
+1.  **Restore Stage**: Copies only `.csproj` files first to cache NuGet packages.
+2.  **Build Stage**: Compiles the application in `Release` mode.
+3.  **Publish Stage**: Publishes the artifact to a folder, removing unnecessary files.
+4.  **Runtime Stage**: Uses the lightweight `mcr.microsoft.com/dotnet/aspnet:9.0` image. It exposes port `8080`.
+
+### Running with Docker
+
+To build and run the application container:
 
 ```bash
-git clone https://github.com/tu-usuario/service-api-csharp.git
-cd service-api-csharp
+# Build the image
+docker build -t service-api-csharp .
+
+# Run the container
+docker run -d -p 8080:8080 --name service-api service-api-csharp
 ```
 
-### 2. Configurar la base de datos
+### Docker Compose
 
-Edita el archivo `appsettings.json` en `service-api-csharp.API`:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=servicedb;Username=postgres;Password=tu_password"
-  }
-}
-```
-
-### 3. Aplicar migraciones
-
-```bash
-cd service-api-csharp.API
-dotnet ef database update
-```
-
-### 4. Ejecutar la aplicación
-
-```bash
-dotnet run
-```
-
-La API estará disponible en:
-- **HTTP**: `http://localhost:5000`
-- **HTTPS**: `https://localhost:5001`
-- **Swagger**: `https://localhost:5001/swagger`
-
-## 🐳 Docker
-
-### Ejecutar con Docker Compose
+For a complete local development environment (API + PostgreSQL), use:
 
 ```bash
 docker-compose up -d
 ```
 
-Esto iniciará:
-- API en `http://localhost:8080`
-- PostgreSQL en `localhost:5432`
-- pgAdmin en `http://localhost:5050` (opcional)
+---
 
-### Construir imagen Docker
+## 🚀 Getting Started
 
-```bash
-docker build -t service-api-csharp .
-```
+### Prerequisites
+*   [.NET 9 SDK](https://dotnet.microsoft.com/download)
+*   [PostgreSQL](https://www.postgresql.org/)
+*   [Docker](https://www.docker.com/) (Optional)
 
-## 📚 Documentación
+### Installation
 
-- [Estructura del Proyecto](docs/Architecture/PROJECT_STRUCTURE.md)
-- [Diagrama de Arquitectura](docs/Architecture/ARCHITECTURE_DIAGRAM.md)
-- [Guía de Desarrollo](docs/Guides/DEVELOPMENT_GUIDE.md) (próximamente)
-- [API Documentation](docs/API/API_DOCUMENTATION.md) (próximamente)
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/your-org/service-api-csharp.git
+    cd service-api-csharp
+    ```
 
-## 🧪 Pruebas
+2.  **Configure Environment**:
+    Update `appsettings.json` in `service-api-csharp.API` with your database credentials.
 
-### Ejecutar todas las pruebas
+3.  **Apply Migrations**:
+    ```bash
+    cd service-api-csharp.API
+    dotnet ef database update
+    ```
 
+4.  **Run the Application**:
+    ```bash
+    dotnet run
+    ```
+    Access Swagger UI at `http://localhost:5000/swagger`.
+
+---
+
+## 🧪 Testing
+
+The project includes a comprehensive test suite.
+
+*   **Unit Tests**: Testing individual components (Handlers, Services) with mocked dependencies.
+*   **Integration Tests**: Testing the full pipeline with an in-memory or Dockerized database.
+
+To run tests:
 ```bash
 dotnet test
 ```
 
-### Ejecutar pruebas con cobertura
-
-```bash
-dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-```
-
-### Tipos de pruebas
-
-- **Unit Tests**: Pruebas unitarias de lógica de negocio
-- **Integration Tests**: Pruebas de integración con base de datos
-- **E2E Tests**: Pruebas de extremo a extremo
-
-## 📦 Paquetes NuGet Principales
-
-```xml
-<!-- Application Layer -->
-<PackageReference Include="MediatR" Version="12.2.0" />
-<PackageReference Include="AutoMapper" Version="12.0.1" />
-<PackageReference Include="FluentValidation" Version="11.9.0" />
-
-<!-- Infrastructure Layer -->
-<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-<PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
-
-<!-- API Layer -->
-<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
-```
-
-## 🔧 Scripts Útiles
-
-### Crear nueva migración
-
-```bash
-dotnet ef migrations add NombreMigracion --project service-api-csharp.Infrastructure --startup-project service-api-csharp.API
-```
-
-### Revertir migración
-
-```bash
-dotnet ef database update PreviousMigration --project service-api-csharp.Infrastructure --startup-project service-api-csharp.API
-```
-
-### Limpiar y reconstruir
-
-```bash
-dotnet clean
-dotnet build
-```
-
-## 🌟 Características
-
-- ✅ Clean Architecture con separación de capas
-- ✅ CQRS con MediatR
-- ✅ Validación automática con FluentValidation
-- ✅ Mapeo automático con AutoMapper
-- ✅ Documentación con Swagger/OpenAPI
-- ✅ Autenticación JWT
-- ✅ Logging estructurado con Serilog
-- ✅ Manejo global de excepciones
-- ✅ Paginación y filtrado
-- ✅ Soft Delete
-- ✅ Auditoría automática (CreatedAt, UpdatedAt)
-- ✅ Unit of Work pattern
-- ✅ Repository pattern
-- ✅ Specification pattern
-- ✅ Domain Events
-
-## 📝 Convenciones de Código
-
-### Nomenclatura
-
-- **Entidades**: `Product`, `User`, `Order`
-- **Interfaces**: `IProductRepository`, `IEmailService`
-- **DTOs**: `ProductDto`, `CreateProductDto`
-- **Commands**: `CreateProductCommand`, `UpdateProductCommand`
-- **Queries**: `GetProductByIdQuery`, `GetProductsListQuery`
-- **Handlers**: `CreateProductCommandHandler`, `GetProductByIdQueryHandler`
-- **Validators**: `CreateProductCommandValidator`
-
-### Organización
-
-- Organización vertical por **Features** (no por tipo de archivo)
-- Cada feature contiene sus Commands, Queries, DTOs y Validators
-- Código compartido en carpetas `Common`
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-
-- LinkedIn: [tu-perfil](https://linkedin.com/in/tu-perfil)
-- GitHub: [@tu-usuario](https://github.com/tu-usuario)
-
 ---
 
-⭐ Si este proyecto te fue útil, considera darle una estrella en GitHub!
+## � Project Structure
+
+```
+service-api-csharp/
+├── service-api-csharp.Domain/          # Enterprise business rules
+├── service-api-csharp.Application/     # Application business rules
+├── service-api-csharp.Infrastructure/  # Frameworks & Drivers
+├── service-api-csharp.API/             # Interface Adapters
+├── tests/                              # Unit & Integration Tests
+└── docker/                             # Docker configuration
+```
